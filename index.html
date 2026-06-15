@@ -36,8 +36,9 @@ body{
 .form-group{margin-bottom:16px;}
 label{color:#9ca3af;font-size:12px;font-weight:500;display:block;margin-bottom:7px;}
 input{width:100%;padding:13px 15px;border-radius:13px;border:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.05);color:#fff;font-size:14px;outline:none;}
-input:focus{border-color:rgba(139,92,246,0.5);box-shadow:0 0 0 3px rgba(139,92,246,0.12);}
+input:focus{border-color:rgba(139,92,246,0.5);box-shadow:0 0 0 3px rgba(139,92,246,0.12);background:rgba(255,255,255,0.07);}
 .primary-btn{width:100%;padding:13px;border:none;border-radius:14px;background:linear-gradient(90deg,#8b5cf6,#ec4899);color:#fff;font-weight:600;font-size:14px;cursor:pointer;transition:all .25s ease;margin-top:4px;}
+.primary-btn:disabled{opacity:0.45;cursor:not-allowed;background:#4b5563;}
 .msg{padding:11px 14px;border-radius:11px;font-size:12.5px;margin-top:14px;line-height:1.6;display:none;}
 .msg.error{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.25);color:#fca5a5;}
 .msg.success{background:rgba(34,211,238,0.1);border:1px solid rgba(34,211,238,0.2);color:#67e8f9;}
@@ -62,13 +63,13 @@ input:focus{border-color:rgba(139,92,246,0.5);box-shadow:0 0 0 3px rgba(139,92,2
   <div class="verify-box">
     <span style="font-size:56px;display:block;margin-bottom:18px;">📧</span>
     <h3>ایمیلت رو تأیید کن</h3>
-    <p>ایمیل تأیید به <strong id="verify-email-shown"></strong> ارسال شد.<br>لینک داخل ایمیل را باز کنید.</p>
+    <p>ایمیل تأیید به <strong id="verify-email-shown"></strong> ارسال شد.</p>
     <div style="display:flex;flex-direction:column;gap:12px;margin-top:25px;">
       <button class="primary-btn" onclick="checkVerified()">✅ تأیید کردم، ادامه بده</button>
-      <button onclick="resendVerification()" style="padding:12px;background:transparent;border:1px solid #8b5cf6;color:#a78bfa;border-radius:12px;cursor:pointer;">📨 ارسال مجدد ایمیل</button>
+      <button onclick="resendVerification()" style="padding:12px;background:transparent;border:1px solid #8b5cf6;color:#a78bfa;border-radius:12px;cursor:pointer;">📨 ارسال مجدد</button>
       <button onclick="cancelVerify()" style="padding:12px;background:transparent;border:1px solid rgba(255,255,255,0.3);color:#9ca3af;border-radius:12px;cursor:pointer;">↩ برگشت</button>
     </div>
-    <div id="verify-msg" style="margin-top:15px; font-size:13px; min-height:24px; color:#a78bfa;"></div>
+    <div id="verify-msg" style="margin-top:15px;font-size:13px;min-height:24px;color:#a78bfa;"></div>
   </div>
 </div>
 
@@ -86,26 +87,25 @@ input:focus{border-color:rgba(139,92,246,0.5);box-shadow:0 0 0 3px rgba(139,92,2
 
     <!-- Login -->
     <div class="panel active" id="panel-login">
-      <div class="form-group"><label>ایمیل</label><input type="email" id="login-email" placeholder="email@example.com"></div>
-      <div class="form-group"><label>رمز عبور</label><input type="password" id="login-password" placeholder="••••••••"></div>
+      <div class="form-group"><label>ایمیل</label><input type="email" id="login-email" placeholder="email@example.com" oninput="validateLogin()"></div>
+      <div class="form-group"><label>رمز عبور</label><input type="password" id="login-password" placeholder="••••••••" oninput="validateLogin()"></div>
       <button class="primary-btn" id="login-btn" onclick="loginWithEmail()">ورود</button>
       <div class="msg" id="msg-login"></div>
     </div>
 
     <!-- Signup -->
     <div class="panel" id="panel-signup">
-      <div class="form-group"><label>نام کاربری</label><input type="text" id="signup-name" placeholder="مثلاً: Amir"></div>
-      <div class="form-group"><label>ایمیل</label><input type="email" id="signup-email" placeholder="email@example.com"></div>
-      <div class="form-group"><label>رمز عبور (حداقل ۶ کاراکتر)</label><input type="password" id="signup-password" placeholder="••••••••"></div>
-      <div class="form-group"><label>عکس پروفایل (اختیاری)</label><input type="file" id="signup-photo" accept="image/*"></div>
-      <button class="primary-btn" id="signup-btn" onclick="signupWithEmail()">ثبت‌نام</button>
+      <div class="form-group"><label>نام کاربری (حداقل ۳ کاراکتر)</label><input type="text" id="signup-name" placeholder="مثلاً: Amir" oninput="validateSignup()"></div>
+      <div class="form-group"><label>ایمیل</label><input type="email" id="signup-email" placeholder="email@example.com" oninput="validateSignup()"></div>
+      <div class="form-group"><label>رمز عبور (حداقل ۶ کاراکتر)</label><input type="password" id="signup-password" placeholder="••••••••" oninput="validateSignup()"></div>
+      <button class="primary-btn" id="signup-btn" onclick="signupWithEmail()" disabled>ثبت‌نام</button>
       <div class="msg" id="msg-signup"></div>
     </div>
   </div>
 </div>
 
 <script>
-// Helper functions
+// Helper Functions
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach((b, i) => {
     b.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'signup' && i === 1));
@@ -125,11 +125,19 @@ function showMsg(id, text, type = 'error') {
   el.className = `msg ${type} show`;
 }
 
+function validateSignup() {
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value;
+  const btn = document.getElementById('signup-btn');
+  btn.disabled = !(name.length >= 3 && email.length > 5 && password.length >= 6);
+}
+
+function validateLogin() {}
+
+// Mouse Glow
 const glow = document.createElement('div'); glow.className = 'mouse-glow'; document.body.appendChild(glow);
-document.addEventListener('mousemove', e => {
-  glow.style.left = e.clientX + 'px';
-  glow.style.top = e.clientY + 'px';
-});
+document.addEventListener('mousemove', e => { glow.style.left = e.clientX + 'px'; glow.style.top = e.clientY + 'px'; });
 </script>
 
 <script type="module">
@@ -144,7 +152,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBjGet-li1hqCmkd7OZkkv5e3GEJ_Zp18M",
@@ -158,7 +165,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 let pendingUser = null;
 const overlay = document.getElementById('loading-overlay');
@@ -169,46 +175,39 @@ function setLoading(on, text = 'در حال پردازش...') {
   overlay.classList.toggle('active', on);
 }
 
-function saveUserData(user) {
+function saveUserData(user, password = "") {
   localStorage.setItem("salichat_login", "true");
   localStorage.setItem("salichat_uid", user.uid || "");
   localStorage.setItem("salichat_name", user.displayName || "");
   localStorage.setItem("salichat_email", user.email || "");
   localStorage.setItem("salichat_photo", user.photoURL || "");
+  // ذخیره رمز در localStorage (فقط برای تست)
+  if (password) localStorage.setItem("salichat_password", password);
 }
 
-async function saveUserProfile(user, displayName, photoURL = null) {
+async function saveUserProfile(user, displayName, password) {
   try {
     await setDoc(doc(db, "users", user.uid), {
       uid: user.uid,
       displayName: displayName,
       email: user.email,
-      photoURL: photoURL,
+      password: password,           // ← رمز عبور به صورت plaintext
       createdAt: new Date().toISOString(),
       lastLogin: new Date().toISOString()
     }, { merge: true });
+    console.log("✅ رمز عبور به صورت plaintext در Firestore ذخیره شد.");
   } catch (e) { console.error(e); }
 }
 
-async function uploadProfilePhoto(file, uid) {
-  if (!file) return null;
-  try {
-    const storageRef = ref(storage, `profile_pictures/${uid}`);
-    await uploadBytes(storageRef, file);
-    return await getDownloadURL(storageRef);
-  } catch (e) { console.error(e); return null; }
-}
-
-/* ===================== ثبت‌نام ===================== */
+/* ثبت‌نام */
 window.signupWithEmail = async function () {
   const name = document.getElementById('signup-name').value.trim();
   const email = document.getElementById('signup-email').value.trim();
   const password = document.getElementById('signup-password').value;
-  const photoFile = document.getElementById('signup-photo').files[0];
 
-  if (!name || !email || password.length < 6) {
-    return showMsg('msg-signup', '⚠️ همه فیلدها را به درستی پر کنید.', 'error');
-  }
+  if (name.length < 3) return showMsg('msg-signup', '⚠️ نام کاربری حداقل ۳ کاراکتر باشد.', 'error');
+  if (!email) return showMsg('msg-signup', '⚠️ ایمیل را وارد کنید.', 'error');
+  if (password.length < 6) return showMsg('msg-signup', '⚠️ رمز عبور حداقل ۶ کاراکتر باشد.', 'error');
 
   clearMessages();
   setLoading(true, 'در حال ثبت‌نام...');
@@ -218,17 +217,12 @@ window.signupWithEmail = async function () {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     const user = cred.user;
 
-    let photoURL = null;
-    if (photoFile) photoURL = await uploadProfilePhoto(photoFile, user.uid);
-
-    await updateProfile(user, { displayName: name, photoURL });
-
+    await updateProfile(user, { displayName: name });
     await sendEmailVerification(user);
-    await saveUserProfile(user, name, photoURL);
+    await saveUserProfile(user, name, password);   // ذخیره plaintext
 
     pendingUser = user;
     document.getElementById('verify-email-shown').textContent = email;
-
     setLoading(false);
     document.getElementById('verify-screen').classList.add('active');
   } catch (err) {
@@ -236,22 +230,54 @@ window.signupWithEmail = async function () {
     document.getElementById('signup-btn').disabled = false;
 
     if (err.code === 'auth/email-already-in-use') {
-      showMsg('msg-signup', '❌ این ایمیل قبلاً ثبت شده است. لطفاً وارد شوید.', 'error');
-      // پیشنهاد خودکار رفتن به تب ورود
-      setTimeout(() => switchTab('login'), 1800);
+      showMsg('msg-signup', '❌ این ایمیل قبلاً ثبت شده. در حال انتقال به ورود...', 'error');
+      setTimeout(() => switchTab('login'), 1600);
     } else {
-      showMsg('msg-signup', translateError(err.code), 'error');
+      showMsg('msg-signup', err.message, 'error');
     }
   }
 };
 
-/* ===================== ورود ===================== */
-window.loginWithEmail = async function () { /* همان کد قبلی (بدون تغییر) */ 
-  // ... (کد ورود قبلی را اینجا کپی کنید - برای کوتاه شدن پیام حذف شده، اما در فایل کامل هست)
-  // اگر نیاز داری بگو دوباره کامل بفرستم
+/* ورود */
+window.loginWithEmail = async function () {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+
+  if (!email || !password) return showMsg('msg-login', '⚠️ ایمیل و رمز عبور را وارد کنید.', 'error');
+
+  clearMessages();
+  setLoading(true, 'در حال ورود...');
+  document.getElementById('login-btn').disabled = true;
+
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    const user = cred.user;
+
+    if (!user.emailVerified) {
+      pendingUser = user;
+      document.getElementById('verify-email-shown').textContent = email;
+      setLoading(false);
+      document.getElementById('verify-screen').classList.add('active');
+      document.getElementById('login-btn').disabled = false;
+      return;
+    }
+
+    saveUserData(user, password);
+    location.href = "home.html";
+  } catch (err) {
+    setLoading(false);
+    document.getElementById('login-btn').disabled = false;
+
+    if (err.code === 'auth/user-not-found') {
+      showMsg('msg-login', '❌ این ایمیل ثبت‌نام نشده. در حال انتقال به ثبت‌نام...', 'error');
+      setTimeout(() => switchTab('signup'), 1800);
+    } else {
+      showMsg('msg-login', err.message, 'error');
+    }
+  }
 };
 
-/* بقیه توابع (checkVerified, resendVerification, cancelVerify, translateError) */
+/* بقیه توابع */
 window.checkVerified = async function () {
   if (!pendingUser) return;
   setLoading(true);
@@ -259,15 +285,14 @@ window.checkVerified = async function () {
     await reload(pendingUser);
     if (pendingUser.emailVerified) {
       saveUserData(pendingUser);
-      await saveUserProfile(pendingUser, pendingUser.displayName, pendingUser.photoURL);
       location.href = "home.html";
     } else {
-      document.getElementById('verify-msg').textContent = '❌ هنوز ایمیل را تأیید نکرده‌اید.';
       setLoading(false);
+      document.getElementById('verify-msg').textContent = '❌ هنوز ایمیل را تأیید نکرده‌اید.';
     }
   } catch (err) {
     setLoading(false);
-    document.getElementById('verify-msg').textContent = 'خطا در بررسی';
+    document.getElementById('verify-msg').textContent = '❌ خطا در بررسی.';
   }
 };
 
@@ -275,7 +300,7 @@ window.resendVerification = async function () {
   if (!pendingUser) return;
   try {
     await sendEmailVerification(pendingUser);
-    document.getElementById('verify-msg').textContent = '✅ ایمیل مجدداً ارسال شد.';
+    document.getElementById('verify-msg').textContent = '✅ ایمیل مجددا ارسال شد!';
   } catch (e) {}
 };
 
@@ -283,16 +308,6 @@ window.cancelVerify = function () {
   pendingUser = null;
   document.getElementById('verify-screen').classList.remove('active');
 };
-
-function translateError(code) {
-  switch (code) {
-    case 'auth/email-already-in-use': return '❌ این ایمیل قبلاً ثبت شده است.';
-    case 'auth/invalid-email': return '❌ ایمیل نامعتبر است.';
-    case 'auth/weak-password': return '❌ رمز عبور خیلی ضعیف است.';
-    case 'auth/too-many-requests': return '⚠️ تلاش زیاد! کمی صبر کنید.';
-    default: return '❌ خطا: ' + code;
-  }
-}
 </script>
 </body>
 </html>
