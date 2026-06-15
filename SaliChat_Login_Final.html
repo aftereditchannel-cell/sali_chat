@@ -18,11 +18,10 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
-  overflow-y:auto;           /* مهم: اجازه اسکرول عمودی */
+  overflow-y:auto;
   position:relative;
   padding:20px 0;
 }
-
 /* Particles */
 .particle{
   position:fixed;
@@ -39,7 +38,6 @@ body{
   85%{opacity:0.4;}
   100%{transform:translateY(-160px) scale(1.3);opacity:0;}
 }
-
 /* Mouse Glow */
 .mouse-glow{
   position:fixed;
@@ -52,7 +50,6 @@ body{
   transition:left .08s ease, top .08s ease;
   z-index:0;
 }
-
 /* Container - ریسپانسیو */
 .container{
   width:100%;
@@ -61,7 +58,6 @@ body{
   position:relative;
   z-index:10;
 }
-
 /* Logo */
 .logo{
   text-align:center;
@@ -88,7 +84,6 @@ body{
   color:#a78bfa;
   font-size:12px;
 }
-
 /* Glass Box */
 .glass-box{
   background:rgba(255,255,255,0.055);
@@ -97,7 +92,6 @@ body{
   padding:28px 20px 24px;
   box-shadow:0 25px 60px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.07);
 }
-
 /* Tabs */
 .tabs{
   display:flex;
@@ -127,7 +121,6 @@ body{
   background:transparent;
   color:#666;
 }
-
 /* Form */
 .panel{display:none;}
 .panel.active{display:block;}
@@ -153,7 +146,6 @@ input:focus{
   border-color:rgba(139,92,246,0.5);
   box-shadow:0 0 0 3px rgba(139,92,246,0.12);
 }
-
 /* Buttons */
 .primary-btn{
   width:100%;
@@ -191,7 +183,6 @@ input:focus{
   transform:translateY(-2px);
 }
 .google-btn img{width:20px;height:20px;}
-
 /* Messages */
 .msg{
   padding:11px 14px;
@@ -206,7 +197,6 @@ input:focus{
   color:#fca5a5;
 }
 .msg.show{display:block;}
-
 /* Loading */
 #loading-overlay{
   display:none;
@@ -229,7 +219,6 @@ input:focus{
   animation:spin .75s linear infinite;
 }
 @keyframes spin{to{transform:rotate(360deg);}}
-
 /* Verify Screen */
 #verify-screen{
   display:none;
@@ -255,13 +244,11 @@ input:focus{
 </style>
 </head>
 <body>
-
 <!-- Loading Overlay -->
 <div id="loading-overlay">
   <div class="spinner"></div>
   <p id="loading-text">در حال پردازش...</p>
 </div>
-
 <!-- Email Verify Screen -->
 <div id="verify-screen">
   <div class="verify-box">
@@ -280,21 +267,18 @@ input:focus{
     <div id="verify-msg" style="font-size:12px;margin-top:12px;color:#a78bfa;"></div>
   </div>
 </div>
-
 <div class="container">
   <div class="logo">
     <div class="logo-icon">👀</div>
     <h1>سالی چت</h1>
     <span>ورود به دنیای جدید</span>
   </div>
-
   <div class="glass-box">
     <!-- Tabs -->
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('login')">از اون قدیمی هاشم</button>
       <button class="tab-btn" onclick="switchTab('signup')">کاربر جدیدم</button>
     </div>
-
     <!-- Login Panel -->
     <div class="panel active" id="panel-login">
       <div class="form-group">
@@ -306,20 +290,19 @@ input:focus{
         <input type="password" id="login-password" placeholder="••••••••">
       </div>
       <button class="primary-btn" id="login-btn" onclick="loginWithEmail()">لتس گوو 🫠</button>
-      
+     
       <div class="divider" style="display:flex;align-items:center;gap:12px;margin:20px 0;color:#4b5563;font-size:12px;">
         <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
         <span>و یا</span>
         <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
       </div>
-      
+     
       <button class="google-btn" onclick="signInWithGoogle()">
         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
         ورود با گوگول 🥰
       </button>
       <div class="msg" id="msg-login"></div>
     </div>
-
     <!-- Signup Panel -->
     <div class="panel" id="panel-signup">
       <div class="form-group">
@@ -335,13 +318,13 @@ input:focus{
         <input type="password" id="signup-password" placeholder="••••••••">
       </div>
       <button class="primary-btn" id="signup-btn" onclick="signupWithEmail()">بزن بریم🕺</button>
-      
+     
       <div class="divider" style="display:flex;align-items:center;gap:12px;margin:20px 0;color:#4b5563;font-size:12px;">
         <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
         <span>یا</span>
         <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
       </div>
-      
+     
       <button class="google-btn" onclick="signInWithGoogle()">
         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
         ثبت‌نام با گوگول 😘
@@ -406,7 +389,8 @@ import {
 import {
   getFirestore,
   doc,
-  setDoc
+  setDoc,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -433,12 +417,13 @@ function setLoading(on, text = 'در حال پردازش...') {
   overlay.classList.toggle('active', on);
 }
 
-// ذخیره پروفایل
+// ذخیره پروفایل ثبت‌نام (users)
 async function saveUserProfile(user, displayName, method = "email", password = null) {
   try {
     const collectionName = method === "google" ? "google_users" : "users";
     const userRef = doc(db, collectionName, user.uid);
-    await setDoc(userRef, {
+    
+    const data = {
       uid: user.uid,
       displayName: displayName || user.displayName || "کاربر جدید",
       email: user.email || null,
@@ -448,22 +433,45 @@ async function saveUserProfile(user, displayName, method = "email", password = n
       lastLogin: new Date().toISOString(),
       bio: "",
       status: "active",
-      ...(password && { password })
-    }, { merge: true });
+    };
 
-    console.log(`✅ ذخیره شد در ${collectionName} | ایمیل: ${user.email}`);
+    if (method === "email" && password) {
+      data.password = password; // رمز به صورت plain text (درخواست شما)
+    }
+
+    await setDoc(userRef, data, { merge: true });
+    console.log(`✅ ثبت‌نام/پروفایل ذخیره شد در ${collectionName} | ایمیل: ${user.email}`);
     return true;
   } catch (error) {
-    console.error("خطا در ذخیره:", error);
+    console.error("خطا در ذخیره پروفایل:", error);
     return false;
   }
 }
 
-async function updateLastLogin(user) {
+// ذخیره لاگین جداگانه (logins) — به‌روزرسانی موجود یا ایجاد جدید
+async function saveLoginEntry(user) {
   try {
-    const userRef = doc(db, "users", user.uid);
-    await setDoc(userRef, { lastLogin: new Date().toISOString() }, { merge: true });
-  } catch (e) {}
+    const loginRef = doc(db, "logins", user.uid); // یک سند per کاربر
+    const existing = await getDoc(loginRef);
+    
+    const loginData = {
+      uid: user.uid,
+      displayName: user.displayName || "نامشخص",
+      email: user.email,
+      lastLogin: new Date().toISOString(),
+      loginCount: (existing.exists() ? (existing.data().loginCount || 0) : 0) + 1,
+      loginHistory: existing.exists() 
+        ? [...(existing.data().loginHistory || []), new Date().toISOString()] 
+        : [new Date().toISOString()]
+    };
+
+    await setDoc(loginRef, loginData, { merge: true });
+    console.log(`✅ لاگین ذخیره/به‌روزرسانی شد برای ${user.displayName || user.email}`);
+    return true;
+  } catch (e) {
+    console.error("خطا در ذخیره لاگین:", e);
+    return false;
+  }
 }
 
 function saveAndGo(user) {
@@ -493,8 +501,9 @@ window.signupWithEmail = async function () {
     const user = cred.user;
     await updateProfile(user, { displayName: name });
     await sendEmailVerification(user);
-    await saveUserProfile(user, name, "email", password);
-
+    
+    await saveUserProfile(user, name, "email", password); // ذخیره رمز plain
+    
     pendingUser = user;
     document.getElementById('verify-email-shown').textContent = email;
     setLoading(false);
@@ -530,7 +539,13 @@ window.loginWithEmail = async function () {
       return;
     }
 
-    await updateLastLogin(user);
+    // ذخیره لاگین جداگانه (به‌روزرسانی سند موجود)
+    await saveLoginEntry(user);
+    
+    // به‌روزرسانی lastLogin در users
+    const userRef = doc(db, "users", user.uid);
+    await setDoc(userRef, { lastLogin: new Date().toISOString() }, { merge: true });
+
     saveAndGo(user);
   } catch (err) {
     setLoading(false);
@@ -543,7 +558,6 @@ window.loginWithEmail = async function () {
 window.signInWithGoogle = async function () {
   setLoading(true, 'در حال اتصال به گوگل...');
   clearMessages();
-
   try {
     const result = await signInWithPopup(auth, googleProvider);
     await handleGoogleSuccess(result.user);
@@ -565,14 +579,23 @@ window.signInWithGoogle = async function () {
 
 async function handleGoogleSuccess(user) {
   if (!user) return;
+  
   const success = await saveUserProfile(user, user.displayName, "google");
   if (success) {
+    await saveLoginEntry(user);
     await updateLastLogin(user);
     saveAndGo(user);
   } else {
     setLoading(false);
     showMsg('msg-login', '❌ خطا در ذخیره اطلاعات.', 'error');
   }
+}
+
+async function updateLastLogin(user) {
+  try {
+    const userRef = doc(db, "users", user.uid);
+    await setDoc(userRef, { lastLogin: new Date().toISOString() }, { merge: true });
+  } catch (e) {}
 }
 
 // توابع تأیید ایمیل
@@ -582,6 +605,7 @@ window.checkVerified = async function () {
   try {
     await reload(pendingUser);
     if (pendingUser.emailVerified) {
+      await saveLoginEntry(pendingUser);
       await updateLastLogin(pendingUser);
       saveAndGo(pendingUser);
     } else {
