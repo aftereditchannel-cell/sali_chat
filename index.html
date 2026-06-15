@@ -149,51 +149,10 @@ input{
   20%{opacity:1;}
   to{transform:translateY(-140px) scale(1.2);opacity:0;}
 }
-
-/* Loading overlay */
-#loading-overlay{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:linear-gradient(135deg,#020617,#0f172a,#020617);
-  z-index:9999;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  gap:16px;
-}
-
-#loading-overlay.active{
-  display:flex;
-}
-
-.spinner{
-  width:48px;
-  height:48px;
-  border:3px solid rgba(139,92,246,0.2);
-  border-top-color:#8b5cf6;
-  border-radius:50%;
-  animation:spin .8s linear infinite;
-}
-
-@keyframes spin{
-  to{transform:rotate(360deg);}
-}
-
-#loading-overlay p{
-  color:#a78bfa;
-  font-size:14px;
-}
 </style>
 </head>
 
 <body>
-
-<!-- Loading overlay که جای popup رو میگیره -->
-<div id="loading-overlay">
-  <div class="spinner"></div>
-  <p>در حال ورود با گوگل...</p>
-</div>
 
 <div class="container">
   <div class="glass-box">
@@ -248,9 +207,10 @@ setInterval(()=>{
 },200);
 </script>
 
+<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBjGet-li1hqCmkd7OZkkv5e3GEJ_Zp18M",
@@ -265,27 +225,25 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// بررسی نتیجه redirect بعد از برگشت از گوگل
-const overlay = document.getElementById('loading-overlay');
-
-getRedirectResult(auth).then(result => {
-  if (result && result.user) {
+window.loginWithGoogle = async function () {
+  try {
+    const result = await signInWithPopup(auth, provider);
     const user = result.user;
     localStorage.setItem("login", "true");
     localStorage.setItem("userName", user.displayName || "");
     localStorage.setItem("userEmail", user.email || "");
     localStorage.setItem("userPhoto", user.photoURL || "");
     location.href = "home.html";
+  } catch (error) {
+    console.error("خطای Firebase:", error.code, error.message);
+    if (error.code === "auth/popup-blocked") {
+      alert("پاپ‌آپ مرورگر بلاک شده. لطفاً پاپ‌آپ رو در مرورگرت مجاز کن.");
+    } else if (error.code === "auth/cancelled-popup-request") {
+      // کاربر پنجره رو بست — کاری نکن
+    } else {
+      alert("خطا در ورود با گوگل: " + error.message);
+    }
   }
-}).catch(error => {
-  console.error("خطا:", error.code, error.message);
-  overlay.classList.remove('active');
-  alert("خطا در ورود با گوگل: " + error.message);
-});
-
-window.loginWithGoogle = function () {
-  overlay.classList.add('active');
-  signInWithRedirect(auth, provider);
 };
 </script>
 
