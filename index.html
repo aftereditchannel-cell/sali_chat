@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>سالی چت</title>
+<title>👀 Sali Login</title>
 <style>
-/* همان استایل‌های قبلی */
+/* ریست و استایل پایه */
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
   font-family:'Segoe UI', Tahoma, sans-serif;
@@ -18,9 +18,11 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
-  overflow:hidden;
+  overflow-y:auto;           /* مهم: اجازه اسکرول عمودی */
   position:relative;
+  padding:20px 0;
 }
+
 /* Particles */
 .particle{
   position:fixed;
@@ -37,6 +39,7 @@ body{
   85%{opacity:0.4;}
   100%{transform:translateY(-160px) scale(1.3);opacity:0;}
 }
+
 /* Mouse Glow */
 .mouse-glow{
   position:fixed;
@@ -49,18 +52,20 @@ body{
   transition:left .08s ease, top .08s ease;
   z-index:0;
 }
-/* Container */
+
+/* Container - ریسپانسیو */
 .container{
   width:100%;
   max-width:420px;
-  padding:20px;
+  padding:15px;
   position:relative;
   z-index:10;
 }
+
 /* Logo */
 .logo{
   text-align:center;
-  margin-bottom:28px;
+  margin-bottom:24px;
 }
 .logo-icon{
   width:56px;height:56px;
@@ -83,32 +88,35 @@ body{
   color:#a78bfa;
   font-size:12px;
 }
+
 /* Glass Box */
 .glass-box{
   background:rgba(255,255,255,0.055);
   backdrop-filter:blur(40px);
   border-radius:28px;
-  padding:32px 26px 28px;
+  padding:28px 20px 24px;
   box-shadow:0 25px 60px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.07);
 }
+
 /* Tabs */
 .tabs{
   display:flex;
   background:rgba(0,0,0,0.3);
   border-radius:14px;
   padding:4px;
-  margin-bottom:26px;
+  margin-bottom:24px;
   gap:4px;
 }
 .tab-btn{
   flex:1;
-  padding:10px;
+  padding:11px 8px;
   border:none;
   border-radius:10px;
   font-size:13px;
   font-weight:600;
   cursor:pointer;
   transition:all .25s ease;
+  line-height:1.3;
 }
 .tab-btn.active{
   background:linear-gradient(90deg,#8b5cf6,#ec4899);
@@ -119,16 +127,17 @@ body{
   background:transparent;
   color:#666;
 }
+
 /* Form */
 .panel{display:none;}
 .panel.active{display:block;}
 .form-group{margin-bottom:16px;}
 label{
   color:#9ca3af;
-  font-size:12px;
+  font-size:12.5px;
   font-weight:500;
   display:block;
-  margin-bottom:7px;
+  margin-bottom:6px;
 }
 input{
   width:100%;
@@ -144,6 +153,7 @@ input:focus{
   border-color:rgba(139,92,246,0.5);
   box-shadow:0 0 0 3px rgba(139,92,246,0.12);
 }
+
 /* Buttons */
 .primary-btn{
   width:100%;
@@ -175,12 +185,13 @@ input:focus{
   width:100%;
   border:none;
   font-size:14px;
-  margin-top:8px;
+  margin-top:10px;
 }
 .google-btn:hover{
   transform:translateY(-2px);
 }
 .google-btn img{width:20px;height:20px;}
+
 /* Messages */
 .msg{
   padding:11px 14px;
@@ -195,6 +206,7 @@ input:focus{
   color:#fca5a5;
 }
 .msg.show{display:block;}
+
 /* Loading */
 #loading-overlay{
   display:none;
@@ -217,6 +229,7 @@ input:focus{
   animation:spin .75s linear infinite;
 }
 @keyframes spin{to{transform:rotate(360deg);}}
+
 /* Verify Screen */
 #verify-screen{
   display:none;
@@ -226,14 +239,14 @@ input:focus{
   z-index:9997;
   justify-content:center;
   align-items:center;
-  padding:24px;
+  padding:20px;
 }
 #verify-screen.active{display:flex;}
 .verify-box{
   background:rgba(255,255,255,0.06);
   backdrop-filter:blur(40px);
   border-radius:28px;
-  padding:36px 26px;
+  padding:32px 24px;
   box-shadow:0 25px 60px rgba(0,0,0,0.65);
   text-align:center;
   max-width:360px;
@@ -259,10 +272,10 @@ input:focus{
       <strong id="verify-email-shown"></strong><br>
       فرستادیم. روی لینک توی ایمیل کلیک کن.
     </p>
-    <div class="verify-actions" style="display:flex;flex-direction:column;gap:10px;">
-      <button class="primary-btn" onclick="checkVerified()">✅ تأیید کردم، ورود کن</button>
-      <button onclick="resendVerification()" style="padding:11px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:#9ca3af;border-radius:12px;cursor:pointer;">📨 ارسال مجدد</button>
-      <button onclick="cancelVerify()" style="padding:11px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:#9ca3af;border-radius:12px;cursor:pointer;">↩ برگشت</button>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="primary-btn" onclick="checkVerified()">✅ تأیید کردم، بزن بریم</button>
+      <button onclick="resendVerification()" style="padding:11px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:#9ca3af;border-radius:12px;cursor:pointer;">📨 یه بار دیگه بفرست لطفا</button>
+      <button onclick="cancelVerify()" style="padding:11px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:#9ca3af;border-radius:12px;cursor:pointer;">↩ برگردیم عقب</button>
     </div>
     <div id="verify-msg" style="font-size:12px;margin-top:12px;color:#a78bfa;"></div>
   </div>
@@ -270,37 +283,39 @@ input:focus{
 
 <div class="container">
   <div class="logo">
-    <div class="logo-icon">💬</div>
+    <div class="logo-icon">👀</div>
     <h1>سالی چت</h1>
-    <span>ورود یا ثبت‌نام</span>
+    <span>ورود به دنیای جدید</span>
   </div>
 
   <div class="glass-box">
     <!-- Tabs -->
     <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('login')">ورود</button>
-      <button class="tab-btn" onclick="switchTab('signup')">ثبت‌نام</button>
+      <button class="tab-btn active" onclick="switchTab('login')">از اون قدیمی هاشم</button>
+      <button class="tab-btn" onclick="switchTab('signup')">کاربر جدیدم</button>
     </div>
 
     <!-- Login Panel -->
     <div class="panel active" id="panel-login">
       <div class="form-group">
-        <label>ایمیل</label>
+        <label>آدرس ایمیل لطفا🥱</label>
         <input type="email" id="login-email" placeholder="email@example.com">
       </div>
       <div class="form-group">
-        <label>رمز عبور</label>
+        <label>یه رمز بزار دزد زیادههه 🥷</label>
         <input type="password" id="login-password" placeholder="••••••••">
       </div>
-      <button class="primary-btn" id="login-btn" onclick="loginWithEmail()">ورود</button>
+      <button class="primary-btn" id="login-btn" onclick="loginWithEmail()">لتس گوو 🫠</button>
+      
       <div class="divider" style="display:flex;align-items:center;gap:12px;margin:20px 0;color:#4b5563;font-size:12px;">
         <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
-        <span>یا</span>
+        <span>و یا</span>
         <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
       </div>
+      
       <button class="google-btn" onclick="signInWithGoogle()">
         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
-        ورود با گوگل
+        ورود با گوگول 🥰
       </button>
       <div class="msg" id="msg-login"></div>
     </div>
@@ -308,26 +323,28 @@ input:focus{
     <!-- Signup Panel -->
     <div class="panel" id="panel-signup">
       <div class="form-group">
-        <label>نام کاربری</label>
+        <label>چی صدات کنیم هوم؟ 🤔</label>
         <input type="text" id="signup-name" placeholder="مثلاً: Amir">
       </div>
       <div class="form-group">
-        <label>ایمیل</label>
+        <label>یه ایمیل بم بده 📧</label>
         <input type="email" id="signup-email" placeholder="email@example.com">
       </div>
       <div class="form-group">
-        <label>رمز عبور (حداقل ۶ کاراکتر)</label>
+        <label>رمز عبور (حداقل ۶ کاراکتر عاموو)🔐</label>
         <input type="password" id="signup-password" placeholder="••••••••">
       </div>
-      <button class="primary-btn" id="signup-btn" onclick="signupWithEmail()">ثبت‌نام</button>
+      <button class="primary-btn" id="signup-btn" onclick="signupWithEmail()">بزن بریم🕺</button>
+      
       <div class="divider" style="display:flex;align-items:center;gap:12px;margin:20px 0;color:#4b5563;font-size:12px;">
         <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
         <span>یا</span>
         <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
       </div>
+      
       <button class="google-btn" onclick="signInWithGoogle()">
         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
-        ثبت‌نام با گوگل
+        ثبت‌نام با گوگول 😘
       </button>
       <div class="msg" id="msg-signup"></div>
     </div>
@@ -416,16 +433,15 @@ function setLoading(on, text = 'در حال پردازش...') {
   overlay.classList.toggle('active', on);
 }
 
-// ذخیره پروفایل با تضمین ذخیره ایمیل
+// ذخیره پروفایل
 async function saveUserProfile(user, displayName, method = "email", password = null) {
   try {
     const collectionName = method === "google" ? "google_users" : "users";
-    
     const userRef = doc(db, collectionName, user.uid);
     await setDoc(userRef, {
       uid: user.uid,
       displayName: displayName || user.displayName || "کاربر جدید",
-      email: user.email || null,           // ← ایمیل همیشه ذخیره می‌شود
+      email: user.email || null,
       photoURL: user.photoURL || null,
       method: method,
       createdAt: new Date().toISOString(),
@@ -459,7 +475,7 @@ function saveAndGo(user) {
   location.href = "home.html";
 }
 
-// ==================== ثبت‌نام با ایمیل ====================
+// ثبت‌نام با ایمیل
 window.signupWithEmail = async function () {
   const name = document.getElementById('signup-name').value.trim();
   const email = document.getElementById('signup-email').value.trim();
@@ -490,7 +506,7 @@ window.signupWithEmail = async function () {
   }
 };
 
-// ==================== ورود با ایمیل ====================
+// ورود با ایمیل
 window.loginWithEmail = async function () {
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
@@ -523,7 +539,7 @@ window.loginWithEmail = async function () {
   }
 };
 
-// ==================== ورود با گوگل ====================
+// ورود با گوگل
 window.signInWithGoogle = async function () {
   setLoading(true, 'در حال اتصال به گوگل...');
   clearMessages();
@@ -559,7 +575,7 @@ async function handleGoogleSuccess(user) {
   }
 }
 
-// ==================== توابع تأیید ایمیل ====================
+// توابع تأیید ایمیل
 window.checkVerified = async function () {
   if (!pendingUser) return;
   setLoading(true, 'در حال بررسی...');
