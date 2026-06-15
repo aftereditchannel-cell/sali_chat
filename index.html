@@ -1,181 +1,292 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🌸 سالی چت 🌸</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;}
+
 body{
-  height:100vh;
-  background:radial-gradient(circle at center,#0b0120,#02010a);
-  display:flex;align-items:center;justify-content:center;
-  color:white;overflow:hidden;
+  font-family:'Segoe UI';
+  background: radial-gradient(circle at 20% 20%, #1a0b3a, transparent 40%),
+              radial-gradient(circle at 80% 80%, #8b5cf6, transparent 40%),
+              linear-gradient(135deg,#020617,#0f172a,#020617);
+  min-height:100dvh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
 }
-canvas{position:fixed;top:0;left:0;}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:linear-gradient(120deg,rgba(139,92,246,.15),rgba(236,72,153,.1));
+  pointer-events:none;
+}
+
 .container{
-  text-align:center;position:relative;z-index:2;
-  padding:60px 20px;
+  width:100%;
+  max-width:400px;
+  padding:20px;
 }
-.logo{
-  width:140px;height:140px;border-radius:30px;
-  overflow:hidden;margin:auto;
-  box-shadow:0 0 80px rgba(168,85,247,0.7);
-}
-.logo img{width:100%;height:100%;object-fit:cover;}
-h1{margin-top:20px;font-size:42px;}
-p{margin-top:10px;color:#aaa;}
-.percent{margin-top:20px;font-size:20px;}
 
-.tag{
-  position:absolute;
+.glass-box{
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(30px);
+  border-radius:24px;
+  padding:30px 22px;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.6),
+    inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+h2{
+  color:#fff;
+  margin-bottom:25px;
+  text-align:center;
+  font-size:20px;
+}
+
+.form-group{
+  margin-bottom:18px;
+}
+
+label{
+  color:#aaa;
+  font-size:12px;
+}
+
+input{
+  width:100%;
+  padding:13px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.05);
+  margin-top:6px;
+  background:rgba(255,255,255,0.04);
+  color:#fff;
+  opacity:0.4;
+  cursor:not-allowed;
+}
+
+.warning{
+  margin-top:10px;
+  font-size:13px;
+  color:#ef4444;
+  text-align:center;
+}
+
+.google-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:13px;
+  border-radius:14px;
+  background:rgba(255,255,255,0.9);
+  color:#111;
+  font-weight:600;
+  cursor:pointer;
+  margin-top:25px;
+  transition:.25s;
+}
+
+.google-btn:hover{
+  transform:translateY(-2px);
+}
+
+.google-btn img{
+  width:20px;
+}
+
+.cta-btn{
+  width:100%;
+  margin-top:22px;
+  padding:15px;
+  border:none;
+  border-radius:16px;
+  background:linear-gradient(90deg,#8b5cf6,#ec4899,#22d3ee);
+  color:#fff;
+  font-weight:bold;
+  font-size:15px;
+  opacity:.4;
+  cursor:not-allowed;
+}
+
+.login-link{
+  text-align:center;
+  color:#a78bfa;
+  cursor:pointer;
+  margin-top:18px;
+  font-size:13px;
+}
+
+.mouse-glow{
+  position:fixed;
+  width:300px;
+  height:300px;
+  border-radius:50%;
+  pointer-events:none;
+  background:radial-gradient(circle,rgba(139,92,246,.25),transparent 70%);
+  filter:blur(20px);
   transform:translate(-50%,-50%);
-  padding:8px 14px;
-  border-radius:999px;
-  background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(10px);
-  border:1px solid rgba(255,255,255,0.2);
-  white-space:nowrap;
-  font-size:14px;
 }
 
-/* موبایل */
-@media(max-width:600px){
-  .logo{width:100px;height:100px;}
-  h1{font-size:28px;}
-  .tag{font-size:12px;padding:6px 10px;}
+.particle{
+  position:fixed;
+  width:5px;
+  height:5px;
+  background:linear-gradient(45deg,#8b5cf6,#22d3ee);
+  border-radius:50%;
+  opacity:.7;
+  animation:floatUp 7s linear infinite;
+}
+
+@keyframes floatUp{
+  from{transform:translateY(0) scale(.8);opacity:0;}
+  20%{opacity:1;}
+  to{transform:translateY(-140px) scale(1.2);opacity:0;}
+}
+
+/* Loading overlay */
+#loading-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:linear-gradient(135deg,#020617,#0f172a,#020617);
+  z-index:9999;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  gap:16px;
+}
+
+#loading-overlay.active{
+  display:flex;
+}
+
+.spinner{
+  width:48px;
+  height:48px;
+  border:3px solid rgba(139,92,246,0.2);
+  border-top-color:#8b5cf6;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg);}
+}
+
+#loading-overlay p{
+  color:#a78bfa;
+  font-size:14px;
 }
 </style>
 </head>
 
 <body>
 
-<canvas id="galaxy"></canvas>
+<!-- Loading overlay که جای popup رو میگیره -->
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <p>در حال ورود با گوگل...</p>
+</div>
 
-<div class="container" id="container">
-  <div class="logo">
-    <img src="https://uploadkon.ir/uploads/4c4414_26ChatGPT-Image-Jun-13-2026-03-10-56-PM.png">
+<div class="container">
+  <div class="glass-box">
+
+    <h2>ثبت نام توی سالی چت</h2>
+
+    <div class="form-group">
+      <label>نام کاربریت چی بود؟</label>
+      <input placeholder="@Amir" disabled>
+    </div>
+
+    <div class="form-group">
+      <label>رمز عبورتم بزن لطفن</label>
+      <input type="password" disabled>
+    </div>
+
+    <div class="warning">
+      به دلایل امنیتی، فعلاً فقط می‌تونی با گوگل ثبت‌نام یا وارد بشی
+    </div>
+
+    <div class="google-btn" onclick="loginWithGoogle()">
+      <img src="https://www.svgrepo.com/show/475656/google-color.svg">
+      ثبت‌نام با گوگل
+    </div>
+
+    <button class="cta-btn" disabled>ثبت‌نام</button>
+
+    <p class="login-link" onclick="location.href='SaliChat_SignUp_Final.html'">
+      قبلاً ثبت‌نام کردی؟ پس بزن روم
+    </p>
+
   </div>
-  <h1>Sali Chat</h1>
-  <p>به دنیای خودت خوش اومدی</p>
-  <div class="percent" id="percent">0%</div>
 </div>
 
 <script>
-const labels=[
-"🏳️‍🌈 Gay","🌸 Lesbian","🕺💃 Straight","✨ Bisexual",
-"⚡ Tomboy","🤍 Femboy","👀 Non-binary","🌈 Trans"
-];
+const glow = document.createElement('div');
+glow.className = 'mouse-glow';
+document.body.appendChild(glow);
 
-const container=document.getElementById("container");
-let tags=[];
+document.addEventListener('mousemove', e=>{
+  glow.style.left = e.clientX + 'px';
+  glow.style.top = e.clientY + 'px';
+});
 
-function createTags(){
-  tags.forEach(t=>t.remove());
-  tags=[];
+setInterval(()=>{
+  const p = document.createElement('div');
+  p.className='particle';
+  p.style.left = Math.random()*window.innerWidth+'px';
+  p.style.top = window.innerHeight+'px';
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(),6000);
+},200);
+</script>
 
-  const W=window.innerWidth;
-  const H=window.innerHeight;
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-  // فضای امن وسط (لوگو + متن)
-  const safeCenter=Math.min(W,H)*0.35;
+const firebaseConfig = {
+  apiKey: "AIzaSyBjGet-li1hqCmkd7OZkkv5e3GEJ_Zp18M",
+  authDomain: "salichattest.firebaseapp.com",
+  projectId: "salichattest",
+  storageBucket: "salichattest.firebasestorage.app",
+  messagingSenderId: "985509042175",
+  appId: "1:985509042175:web:a29ce14b52956af7acb9ca"
+};
 
-  // حداقل فاصله بین دکمه‌ها
-  const gap=20;
-  const approxBtnWidth = W < 600 ? 80 : 110;
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-  // شعاع بر اساس جلوگیری از overlap
-  let minRadius=(labels.length*(approxBtnWidth+gap))/(2*Math.PI);
+// بررسی نتیجه redirect بعد از برگشت از گوگل
+const overlay = document.getElementById('loading-overlay');
 
-  // شعاع اصلی
-  let radius=Math.min(W,H)/2 - safeCenter;
-
-  // انتخاب بزرگتر برای جلوگیری از overlap
-  radius=Math.max(radius,minRadius);
-
-  // ولی از صفحه بیرون نزنه
-  radius=Math.min(radius, Math.min(W,H)/2 - 40);
-
-  labels.forEach((text,i)=>{
-    let el=document.createElement("div");
-    el.className="tag";
-    el.innerText=text;
-
-    let angle=(i/labels.length)*Math.PI*2;
-
-    let offsetX = -40;
-    let x=Math.cos(angle)*radius + offsetX;
-    let y=Math.sin(angle)*radius;
-
-    el.style.left=`calc(50% + ${x}px)`;
-    el.style.top=`calc(50% + ${y}px)`;
-
-    animate(el);
-
-    container.appendChild(el);
-    tags.push(el);
-  });
-}
-
-function animate(el){
-  let t=Math.random()*100;
-  function move(){
-    t+=0.01;
-    let dx=Math.sin(t)*6;
-    let dy=Math.cos(t*1.3)*6;
-    el.style.transform=`translate(${dx}px,${dy}px)`;
-    requestAnimationFrame(move);
+getRedirectResult(auth).then(result => {
+  if (result && result.user) {
+    const user = result.user;
+    localStorage.setItem("login", "true");
+    localStorage.setItem("userName", user.displayName || "");
+    localStorage.setItem("userEmail", user.email || "");
+    localStorage.setItem("userPhoto", user.photoURL || "");
+    location.href = "home.html";
   }
-  move();
-}
+}).catch(error => {
+  console.error("خطا:", error.code, error.message);
+  overlay.classList.remove('active');
+  alert("خطا در ورود با گوگل: " + error.message);
+});
 
-window.addEventListener("resize",createTags);
-createTags();
-
-/* galaxy */
-const c=document.getElementById("galaxy");
-const ctx=c.getContext("2d");
-c.width=innerWidth;
-c.height=innerHeight;
-
-let stars=[];
-for(let i=0;i<120;i++){
-  stars.push({
-    x:Math.random()*c.width,
-    y:Math.random()*c.height,
-    s:Math.random()*2,
-    sp:Math.random()*0.5+0.2
-  });
-}
-
-function draw(){
-  ctx.clearRect(0,0,c.width,c.height);
-  stars.forEach(st=>{
-    st.y-=st.sp;
-    if(st.y<0){st.y=c.height;st.x=Math.random()*c.width;}
-    ctx.beginPath();
-    ctx.arc(st.x,st.y,st.s,0,Math.PI*2);
-    ctx.fillStyle="white";
-    ctx.fill();
-  });
-  requestAnimationFrame(draw);
-}
-draw();
-
-/* loading */
-let p=0;
-let el=document.getElementById("percent");
-let int=setInterval(()=>{
-  p++;
-  el.innerText=p+"%";
-  if(p>=100)clearInterval(int);
-},30);
-
-setTimeout(()=>{
-  window.location.href="SaliChat_Login_Final.html";
-},7000);
-
+window.loginWithGoogle = function () {
+  overlay.classList.add('active');
+  signInWithRedirect(auth, provider);
+};
 </script>
 
 </body>
