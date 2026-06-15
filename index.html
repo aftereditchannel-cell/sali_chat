@@ -91,15 +91,15 @@ input{
   cursor:pointer;
   margin-top:25px;
   transition:.25s;
+  border:none;
+  width:100%;
+  font-size:15px;
 }
 
-.google-btn:hover{
-  transform:translateY(-2px);
-}
+.google-btn:hover{ transform:translateY(-2px); }
+.google-btn:active{ transform:translateY(0); }
 
-.google-btn img{
-  width:20px;
-}
+.google-btn img{ width:20px; }
 
 .cta-btn{
   width:100%;
@@ -149,10 +149,40 @@ input{
   20%{opacity:1;}
   to{transform:translateY(-140px) scale(1.2);opacity:0;}
 }
+
+/* Loading overlay */
+#loading-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:linear-gradient(135deg,#020617,#0f172a,#020617);
+  z-index:9999;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  gap:16px;
+}
+#loading-overlay.active{ display:flex; }
+
+.spinner{
+  width:48px;
+  height:48px;
+  border:3px solid rgba(139,92,246,0.2);
+  border-top-color:#8b5cf6;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{ to{transform:rotate(360deg);} }
+#loading-overlay p{ color:#a78bfa; font-size:14px; }
 </style>
 </head>
 
 <body>
+
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <p>در حال ورود با گوگل...</p>
+</div>
 
 <div class="container">
   <div class="glass-box">
@@ -205,12 +235,22 @@ setInterval(()=>{
   document.body.appendChild(p);
   setTimeout(()=>p.remove(),6000);
 },200);
+
+// تشخیص موبایل
+function isMobile(){
+  return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+}
 </script>
 
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBjGet-li1hqCmkd7OZkkv5e3GEJ_Zp18M",
@@ -224,24 +264,56 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
+const overlay = document.getElementById('loading-overlay');
 
-window.loginWithGoogle = async function () {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    localStorage.setItem("login", "true");
-    localStorage.setItem("userName", user.displayName || "");
-    localStorage.setItem("userEmail", user.email || "");
-    localStorage.setItem("userPhoto", user.photoURL || "");
-    location.href = "home.html";
-  } catch (error) {
-    console.error("خطای Firebase:", error.code, error.message);
-    if (error.code === "auth/popup-blocked") {
-      alert("پاپ‌آپ مرورگر بلاک شده. لطفاً پاپ‌آپ رو در مرورگرت مجاز کن.");
-    } else if (error.code === "auth/cancelled-popup-request") {
-      // کاربر پنجره رو بست — کاری نکن
+function saveUserAndRedirect(user){
+  localStorage.setItem("login", "true");
+  localStorage.setItem("userName", user.displayName || "");
+  localStorage.setItem("userEmail", user.email || "");
+  localStorage.setItem("userPhoto", user.photoURL || "");
+  location.href = "home.html";
+}
+
+// اگه از redirect برگشتیم نتیجه رو بگیر (فقط روی موبایل کار میکنه)
+overlay.classList.add('active');
+getRedirectResult(auth)
+  .then(result => {
+    if(result && result.user){
+      saveUserAndRedirect(result.user);
     } else {
-      alert("خطا در ورود با گوگل: " + error.message);
+      overlay.classList.remove('active');
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    overlay.classList.remove('active');
+  });
+
+window.loginWithGoogle = async function(){
+  const mobile = window.isMobile ? isMobile() : /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  if(mobile){
+    // موبایل: redirect تمام صفحه
+    overlay.classList.add('active');
+    try{
+      await signInWithRedirect(auth, provider);
+    } catch(err){
+      overlay.classList.remove('active');
+      alert("خطا: " + err.message);
+    }
+  } else {
+    // دسکتاپ: popup معمولی
+    try{
+      const result = await signInWithPopup(auth, provider);
+      saveUserAndRedirect(result.user);
+    } catch(err){
+      if(err.code === "auth/popup-blocked"){
+        // اگه popup بلاک بود، برو سراغ redirect
+        overlay.classList.add('active');
+        await signInWithRedirect(auth, provider);
+      } else if(err.code !== "auth/cancelled-popup-request" && err.code !== "auth/popup-closed-by-user"){
+        alert("خطا در ورود با گوگل: " + err.message);
+      }
     }
   }
 };
