@@ -514,11 +514,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import {
   getAuth,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 /* ===================================================
-   🔧 Firebase Config — مقادیر پروژه‌ی خودت رو بذار
+   🔧 Firebase Config
    =================================================== */
 const firebaseConfig = {
   apiKey:            "AIzaSyBjGet-li1hqCmkd7OZkkv5e3GEJ_Zp18M",
@@ -532,19 +534,21 @@ const firebaseConfig = {
 const app      = initializeApp(firebaseConfig);
 const auth     = getAuth(app);
 const provider = new GoogleAuthProvider();
-
-/* مهم: Google همیشه صفحه انتخاب اکانت رو نشون بده */
 provider.setCustomParameters({ prompt: 'select_account' });
 
 const overlay = document.getElementById('loading-overlay');
 
+/* تشخیص موبایل */
+function isMobile() {
+  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
 function saveAndGo(user) {
-  localStorage.setItem("salichat_login",  "true");
-  localStorage.setItem("salichat_name",   user.displayName || "");
-  localStorage.setItem("salichat_email",  user.email       || "");
-  localStorage.setItem("salichat_photo",  user.photoURL    || "");
-  localStorage.setItem("salichat_uid",    user.uid         || "");
-  /* ← آدرس صفحه بعدی رو اینجا عوض کن */
+  localStorage.setItem("salichat_login", "true");
+  localStorage.setItem("salichat_name",  user.displayName || "");
+  localStorage.setItem("salichat_email", user.email       || "");
+  localStorage.setItem("salichat_photo", user.photoURL    || "");
+  localStorage.setItem("salichat_uid",   user.uid         || "");
   location.href = "home.html";
 }
 
@@ -553,54 +557,69 @@ function getActivePanel() {
     ? 'login' : 'signup';
 }
 
+function showAuthError(err) {
+  const msgId = 'msg-' + getActivePanel();
+  overlay.classList.remove('active');
+  switch (err.code) {
+    case 'auth/popup-blocked':
+      showMsg(msgId, '⚠️ پاپ‌آپ بلاک شده. لطفاً پاپ‌آپ رو در مرورگرت فعال کن.', 'error');
+      break;
+    case 'auth/popup-closed-by-user':
+    case 'auth/cancelled-popup-request':
+      break; /* کاربر خودش بست — نیاز به پیام نیست */
+    case 'auth/unauthorized-domain':
+      showMsg(msgId, '🔒 این دامنه در Firebase مجاز نیست. آدرس سایت رو به Authorized Domains اضافه کن.', 'error');
+      break;
+    case 'auth/network-request-failed':
+      showMsg(msgId, '📶 خطای اتصال به Firebase. مطمئن شو دامنه‌ات در Authorized Domains ثبت شده.', 'error');
+      break;
+    default:
+      showMsg(msgId, '❌ خطا: ' + (err.message || 'مشکل نامشخص'), 'error');
+      console.error('[SaliChat Auth]', err.code, err.message);
+  }
+}
+
+/* ── روی موبایل: نتیجه Redirect رو بررسی کن ── */
+if (isMobile()) {
+  overlay.classList.add('active');
+  getRedirectResult(auth)
+    .then(result => {
+      if (result && result.user) {
+        saveAndGo(result.user);
+      } else {
+        overlay.classList.remove('active');
+      }
+    })
+    .catch(err => {
+      showAuthError(err);
+    });
+} 
+
 window.loginWithGoogle = async function () {
-  /* اگه WebView بود، هشدار نشون بده */
+  /* WebView → هشدار */
   if (isWebView()) {
     document.getElementById('current-url').textContent = window.location.href;
     document.getElementById('webview-warning').classList.add('active');
     return;
   }
 
-  const panel = getActivePanel();
-  const msgId = 'msg-' + panel;
+  overlay.classList.add('active');
 
-  try {
-    overlay.classList.add('active');
-    const result = await signInWithPopup(auth, provider);
-    saveAndGo(result.user);
-
-  } catch (err) {
-    overlay.classList.remove('active');
-
-    switch (err.code) {
-      case 'auth/popup-blocked':
-        showMsg(msgId,
-          '⚠️ پاپ‌آپ بلاک شده. لطفاً پاپ‌آپ رو در مرورگرت فعال کن و دوباره امتحان کن.',
-          'error');
-        break;
-
-      case 'auth/popup-closed-by-user':
-      case 'auth/cancelled-popup-request':
-        /* کاربر پنجره رو بست — نیاز به خطا نیست */
-        break;
-
-      case 'auth/unauthorized-domain':
-        showMsg(msgId,
-          '🔒 این دامنه در Firebase مجاز نیست. آدرس سایت رو به Authorized Domains اضافه کن.',
-          'error');
-        break;
-
-      case 'auth/network-request-failed':
-        showMsg(msgId,
-          '📶 خطای اینترنت. اتصالت رو چک کن و دوباره امتحان کن.',
-          'error');
-        break;
-
-      default:
-        showMsg(msgId,
-          '❌ خطا: ' + (err.message || 'مشکل نامشخص'),
-          'error');
-        console.error('[SaliChat Auth]', err);
+  if (isMobile()) {
+    /* موبایل → Redirect (بهترین روش برای iOS و Android) */
+    try {
+      await signInWithRedirect(auth, provider);
+      /* بعد از redirect، صفحه reload میشه و getRedirectResult بالا نتیجه رو میگیره */
+    } catch (err) {
+      showAuthError(err);
+    }
+  } else {
+    /* دسکتاپ → Popup */
+    try {
+      const result = await signInWithPopup(auth, provider);
+      saveAndGo(result.user);
+    } catch (err) {
+      showAuthError(err);
     }
   }
 };
