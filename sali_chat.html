@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="fa" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sali Chat</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #09090f;
+    --primary: #a855f7;
+    --accent: #ec4899;
+    --glass: rgba(255,255,255,0.06);
+    --glass-border: rgba(255,255,255,0.12);
+    --glass-strong: rgba(255,255,255,0.10);
+    --text: #f0eeff;
+    --text-muted: #9b8ec4;
+    --glow-p: rgba(168,85,247,0.4);
+    --glow-a: rgba(236,72,153,0.4);
+    --radius: 20px;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  /* ─── LIVE BACKGROUND ─── */
+  #bg-canvas {
+    position: fixed; inset: 0; z-index: 0;
+    background: #09090f;
+  }
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: drift linear infinite;
+    will-change: transform;
+    pointer-events: none;
+  }
+  .orb-1 { width: 500px; height: 500px; background: rgba(168,85,247,0.18); top: -10%; left: -10%; animation-duration: 18s; }
+  .orb-2 { width: 400px; height: 400px; background: rgba(236,72,153,0.14); bottom: -5%; right: -10%; animation-duration: 22s; animation-direction: reverse; }
+  .orb-3 { width: 300px; height: 300px; background: rgba(99,102,241,0.12); top: 40%; left: 40%; animation-duration: 28s; animation-delay: -10s; }
+  .orb-4 { width: 200px; height: 200px; background: rgba(168,85,247,0.1); bottom: 20%; left: 10%; animation-duration: 15s; animation-delay: -5s; }
+
+  @keyframes drift {
+    0%   { transform: translate(0,0) scale(1); }
+    25%  { transform: translate(40px, -30px) scale(1.05); }
+    50%  { transform: translate(-20px, 50px) scale(0.95); }
+    75%  { transform: translate(60px, 20px) scale(1.08); }
+    100% { transform: translate(0,0) scale(1); }
+  }
+
+  /* ─── MAIN SHELL ─── */
+  #app {
+    position: fixed; inset: 0; z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .phone-frame {
+    width: 100%; height: 100%;
+    max-width: 430px;
+    display: flex; flex-direction: column;
+    position: relative; overflow: hidden;
+  }
+
+  /* On larger screens, show as phone mockup */
+  @media (min-width: 500px) {
+    .phone-frame {
+      height: 92vh;
+      max-height: 860px;
+      border-radius: 44px;
+      border: 1px solid rgba(168,85,247,0.2);
+      box-shadow: 0 0 80px rgba(168,85,247,0.15), 0 0 200px rgba(168,85,247,0.05), inset 0 1px 0 rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+  }
+
+  /* ─── GLASS OVERLAY ON FRAME ─── */
+  .phone-frame::before {
+    content: '';
+    position: absolute; inset: 0; z-index: 0;
+    background: rgba(9,9,15,0.65);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    pointer-events: none;
+  }
+
+  .content-layer {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    height: 100%; overflow: hidden;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(12px);
+    flex-shrink: 0;
+  }
+
+  .header-logo {
+    font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-actions { display: flex; gap: 12px; align-items: center; }
+
+  .icon-btn {
+    width: 36px; height: 36px;
+    border-radius: 12px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s;
+    color: var(--text-muted);
+  }
+  .icon-btn:hover { background: rgba(168,85,247,0.15); color: var(--primary); border-color: rgba(168,85,247,0.3); }
+
+  .notif-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent); border: 1.5px solid var(--bg);
+    position: absolute; top: -2px; right: -2px;
+  }
+
+  /* ─── SEARCH BAR ─── */
+  .search-bar {
+    margin: 14px 20px 8px;
+    position: relative; flex-shrink: 0;
+  }
+  .search-bar input {
+    width: 100%; padding: 10px 14px 10px 38px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    color: var(--text); font-family: inherit; font-size: 14px;
+    outline: none; transition: all 0.2s;
+  }
+  .search-bar input::placeholder { color: var(--text-muted); }
+  .search-bar input:focus { border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.06); }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+  /* ─── SCROLLABLE BODY ─── */
+  .body-scroll {
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    padding-bottom: 80px;
+  }
+  .body-scroll::-webkit-scrollbar { width: 0; }
+
+  /* ─── SECTION TITLES ─── */
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px 10px; flex-shrink: 0;
+  }
+  .section-title { font-size: 16px; font-weight: 700; color: var(--text); }
+  .section-link {
+    font-size: 12px; color: var(--primary); font-weight: 600; cursor: pointer;
+    padding: 4px 10px; border-radius: 8px;
+    background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.2);
+    transition: all 0.2s;
+  }
+  .section-link:hover { background: rgba(168,85,247,0.2); }
+
+  /* ─── STORIES ─── */
+  .stories-row {
+    display: flex; gap: 14px;
+    padding: 4px 20px 16px;
+    overflow-x: auto; flex-shrink: 0;
+  }
+  .stories-row::-webkit-scrollbar { display: none; }
+
+  .story-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0; }
+
+  .story-ring {
+    width: 62px; height: 62px; border-radius: 50%;
+    padding: 2.5px;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    transition: transform 0.2s; position: relative;
+  }
+  .story-ring:hover { transform: scale(1.05); }
+  .story-ring.add-story { background: var(--glass); border: 2px dashed var(--glass-border); }
+
+  .story-avatar {
+    width: 100%; height: 100%; border-radius: 50%;
+    background: var(--glass-strong);
+    border: 2px solid rgba(9,9,15,0.9);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; overflow: hidden;
+  }
+  .story-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+  .story-name { font-size: 11px; color: var(--text-muted); font-weight: 500; white-space: nowrap; }
+
+  .add-plus {
+    position: absolute; bottom: 0; right: 0;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    border: 2px solid rgba(9,9,15,0.9);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: white; line-height: 1;
+  }
+
+  /* ─── DISCOVER CARD ─── */
+  .discover-section { padding: 0 20px 16px; }
+
+  .discover-card {
+    border-radius: 24px; overflow: hidden;
+    position: relative; height: 200px;
+    background: linear-gradient(160deg, rgba(168,85,247,0.15) 0%, rgba(236,72,153,0.10) 100%);
+    border: 1px solid var(--glass-border);
+    cursor: pointer; transition: transform 0.2s;
+  }
+  .discover-card:hover { transform: scale(1.01); }
+
+  .card-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 30%, rgba(9,9,15,0.9) 100%);
+  }
+
+  .card-avatar-big {
+    position: absolute; top: 16px; right: 16px;
+    width: 80px; height: 80px; border-radius: 50%;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px;
+    box-shadow: 0 8px 32px rgba(168,85,247,0.4);
+  }
+
+  .card-content {
+    position: absolute; bottom: 16px; left: 16px; right: 16px;
+  }
+
+  .match-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 20px;
+    background: rgba(168,85,247,0.2); border: 1px solid rgba(168,85,247,0.4);
+    font-size: 11px; font-weight: 700; color: var(--primary);
+    margin-bottom: 6px;
+  }
+
+  .card-name { font-size: 22px; font-weight: 800; margin-bottom: 2px; }
+  .card-dist { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; margin-bottom: 10px; }
+
+  .card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag {
+    padding: 4px 10px; border-radius: 20px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+    font-size: 11px; font-weight: 500; color: var(--text-muted);
+  }
+
+  .card-actions {
+    position: absolute; top: 16px; left: 16px;
+    display: flex; gap: 8px;
+  }
+  .action-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: none; cursor: pointer; transition: all 0.2s;
+    backdrop-filter: blur(12px);
+  }
+  .action-btn.skip { background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; }
+  .action-btn.like { background: rgba(168,85,247,0.3); border: 1px solid rgba(168,85,247,0.5); color: var(--primary); }
+  .action-btn.skip:hover { background: rgba(239,68,68,0.4); transform: scale(1.1); }
+  .action-btn.like:hover { background: rgba(168,85,247,0.5); transform: scale(1.1); }
+
+  /* ─── CHATS LIST ─── */
+  .chat-list { padding: 0 20px; display: flex; flex-direction: column; gap: 2px; }
+
+  .chat-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 14px;
+    border-radius: 18px;
+    cursor: pointer; transition: all 0.2s;
+    position: relative;
+  }
+  .chat-item:hover { background: var(--glass); }
+  .chat-item:active { background: rgba(168,85,247,0.08); }
+
+  .chat-avatar {
+    width: 50px; height: 50px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--from-color, #a855f7), var(--to-color, #ec4899));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; position: relative;
+  }
+  .online-dot {
+    position: absolute; bottom: 1px; right: 1px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #22c55e; border: 2px solid rgba(9,9,15,0.9);
+  }
+
+  .chat-info { flex: 1; min-width: 0; }
+  .chat-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px; }
+  .chat-preview { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .chat-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+  .chat-time { font-size: 11px; color: var(--text-muted); }
+  .unread-badge {
+    min-width: 20px; height: 20px; padding: 0 6px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    font-size: 11px; font-weight: 700; color: white;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ─── BOTTOM NAV ─── */
+  .bottom-nav {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-around;
+    padding: 10px 10px 20px;
+    background: rgba(9,9,15,0.8);
+    backdrop-filter: blur(24px) saturate(1.5);
+    -webkit-backdrop-filter: blur(24px) saturate(1.5);
+    border-top: 1px solid var(--glass-border);
+    z-index: 10;
+  }
+
+  @media (min-width: 500px) {
+    .bottom-nav { border-radius: 0 0 44px 44px; padding-bottom: 16px; }
+  }
+
+  .nav-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 8px 16px; border-radius: 14px; cursor: pointer;
+    transition: all 0.2s; background: none; border: none; color: var(--text-muted);
+    min-width: 56px;
+  }
+  .nav-btn.active { color: var(--primary); }
+  .nav-btn.active .nav-label { color: var(--primary); }
+  .nav-btn:hover { background: var(--glass); }
+
+  .nav-label { font-size: 10px; font-weight: 600; letter-spacing: 0.3px; color: inherit; }
+
+  .nav-center-btn {
+    width: 52px; height: 52px; border-radius: 18px;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(168,85,247,0.5);
+    border: none; flex-shrink: 0;
+  }
+  .nav-center-btn:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(168,85,247,0.6); }
+
+  /* ─── RESPONSIVE: tablet/desktop ─── */
+  @media (min-width: 768px) {
+    #app { background: transparent; }
+  }
+
+  @media (max-width: 499px) {
+    .phone-frame { border-radius: 0; }
+    .bottom-nav { padding-bottom: env(safe-area-inset-bottom, 12px); }
+  }
+
+  /* ─── SHIMMER ON LOAD ─── */
+  @keyframes shimmer {
+    0% { opacity: 0; transform: translateY(12px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .anim-in { animation: shimmer 0.4s ease forwards; }
+  .anim-in:nth-child(1) { animation-delay: 0.05s; }
+  .anim-in:nth-child(2) { animation-delay: 0.10s; }
+  .anim-in:nth-child(3) { animation-delay: 0.15s; }
+  .anim-in:nth-child(4) { animation-delay: 0.20s; }
+  .anim-in:nth-child(5) { animation-delay: 0.25s; }
+  .anim-in:nth-child(6) { animation-delay: 0.30s; }
+  .anim-in:nth-child(7) { animation-delay: 0.35s; }
+</style>
+</head>
+<body>
+
+<!-- Live Background -->
+<div id="bg-canvas">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<!-- App -->
+<div id="app">
+  <div class="phone-frame">
+    <div class="content-layer">
+
+      <!-- Header -->
+      <div class="header anim-in" style="animation-delay:0s">
+        <div class="header-logo">sali</div>
+        <div class="header-actions">
+          <div class="icon-btn" style="position:relative">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg>
+            <div class="notif-dot"></div>
+          </div>
+          <div class="icon-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="search-bar anim-in" style="animation-delay:0.05s">
+        <div class="search-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </div>
+        <input type="text" placeholder="Search people or chats…" />
+      </div>
+
+      <!-- Scrollable body -->
+      <div class="body-scroll">
+
+        <!-- Stories -->
+        <div class="section-header anim-in">
+          <span class="section-title">Stories</span>
+          <span class="section-link">See all</span>
+        </div>
+        <div class="stories-row anim-in">
+          <!-- Add story -->
+          <div class="story-item">
+            <div class="story-ring add-story">
+              <div class="story-avatar">➕</div>
+              <div class="add-plus">+</div>
+            </div>
+            <span class="story-name">Add</span>
+          </div>
+          <!-- Stories -->
+          <div class="story-item">
+            <div class="story-ring">
+              <div class="story-avatar">🌙</div>
+            </div>
+            <span class="story-name">Luna</span>
+          </div>
+          <div class="story-item">
+            <div class="story-ring" style="background: linear-gradient(135deg,#ec4899,#f97316)">
+              <div class="story-avatar">😊</div>
+            </div>
+            <span class="story-name">Alex</span>
+          </div>
+          <div class="story-item">
+            <div class="story-ring" style="background: linear-gradient(135deg,#6366f1,#a855f7)">
+              <div class="story-avatar">🌸</div>
+            </div>
+            <span class="story-name">Sofia</span>
+          </div>
+          <div class="story-item">
+            <div class="story-ring" style="background: linear-gradient(135deg,#22d3ee,#6366f1)">
+              <div class="story-avatar">✨</div>
+            </div>
+            <span class="story-name">Kai</span>
+          </div>
+          <div class="story-item">
+            <div class="story-ring" style="background: linear-gradient(135deg,#f97316,#ec4899)">
+              <div class="story-avatar">🦋</div>
+            </div>
+            <span class="story-name">Zoe</span>
+          </div>
+          <div class="story-item">
+            <div class="story-ring" style="background: linear-gradient(135deg,#22c55e,#22d3ee)">
+              <div class="story-avatar">🎸</div>
+            </div>
+            <span class="story-name">Max</span>
+          </div>
+        </div>
+
+        <!-- Discover / AI Match Card -->
+        <div class="section-header anim-in">
+          <span class="section-title">Discover</span>
+          <span class="section-link">AI Match</span>
+        </div>
+        <div class="discover-section anim-in">
+          <div class="discover-card">
+            <div class="card-bg"></div>
+            <div class="card-avatar-big">🌙</div>
+            <div class="card-actions">
+              <button class="action-btn skip">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+              </button>
+              <button class="action-btn like">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+              </button>
+            </div>
+            <div class="card-content">
+              <div class="match-badge">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+                94% match
+              </div>
+              <div class="card-name">Luna, 23</div>
+              <div class="card-dist">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+                2.3 km away
+              </div>
+              <div class="card-tags">
+                <span class="tag">💫 Adventurous</span>
+                <span class="tag">🎵 Music Lover</span>
+                <span class="tag">🌈 Gay</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Chats -->
+        <div class="section-header anim-in">
+          <span class="section-title">Recent Chats</span>
+          <span class="section-link">See all</span>
+        </div>
+        <div class="chat-list">
+          <div class="chat-item anim-in" style="--from-color:#a855f7; --to-color:#ec4899">
+            <div class="chat-avatar" style="background: linear-gradient(135deg, #a855f7, #ec4899);">
+              🌙
+              <div class="online-dot"></div>
+            </div>
+            <div class="chat-info">
+              <div class="chat-name">Luna ✨</div>
+              <div class="chat-preview">heyy are you free tonight? 🌙</div>
+            </div>
+            <div class="chat-meta">
+              <span class="chat-time">now</span>
+              <span class="unread-badge">3</span>
+            </div>
+          </div>
+
+          <div class="chat-item anim-in" style="--from-color:#ec4899; --to-color:#f97316">
+            <div class="chat-avatar" style="background: linear-gradient(135deg, #ec4899, #f97316);">😊</div>
+            <div class="chat-info">
+              <div class="chat-name">Alex</div>
+              <div class="chat-preview">let's grab coffee ☕️</div>
+            </div>
+            <div class="chat-meta">
+              <span class="chat-time">2m</span>
+              <span class="unread-badge">1</span>
+            </div>
+          </div>
+
+          <div class="chat-item anim-in" style="--from-color:#6366f1; --to-color:#a855f7">
+            <div class="chat-avatar" style="background: linear-gradient(135deg, #6366f1, #a855f7);">🌸</div>
+            <div class="chat-info">
+              <div class="chat-name">Sofia</div>
+              <div class="chat-preview">omg that was so fun!! 🎉</div>
+            </div>
+            <div class="chat-meta">
+              <span class="chat-time">12m</span>
+            </div>
+          </div>
+
+          <div class="chat-item anim-in" style="--from-color:#22d3ee; --to-color:#6366f1">
+            <div class="chat-avatar" style="background: linear-gradient(135deg, #22d3ee, #6366f1);">
+              ✨
+              <div class="online-dot"></div>
+            </div>
+            <div class="chat-info">
+              <div class="chat-name">Kai</div>
+              <div class="chat-preview">your vibe is immaculate fr 💜</div>
+            </div>
+            <div class="chat-meta">
+              <span class="chat-time">1h</span>
+            </div>
+          </div>
+
+          <div class="chat-item anim-in">
+            <div class="chat-avatar" style="background: linear-gradient(135deg, #f97316, #ec4899);">🦋</div>
+            <div class="chat-info">
+              <div class="chat-name">Zoe</div>
+              <div class="chat-preview">sending you good vibes always 🦋</div>
+            </div>
+            <div class="chat-meta">
+              <span class="chat-time">3h</span>
+            </div>
+          </div>
+
+          <div class="chat-item anim-in">
+            <div class="chat-avatar" style="background: linear-gradient(135deg, #22c55e, #22d3ee);">🎸</div>
+            <div class="chat-info">
+              <div class="chat-name">Max</div>
+              <div class="chat-preview">that playlist was 🔥🔥</div>
+            </div>
+            <div class="chat-meta">
+              <span class="chat-time">5h</span>
+            </div>
+          </div>
+        </div>
+        <!-- bottom padding for nav -->
+        <div style="height:16px"></div>
+      </div>
+
+      <!-- Bottom Nav -->
+      <div class="bottom-nav">
+        <button class="nav-btn active">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          <span class="nav-label">Home</span>
+        </button>
+
+        <button class="nav-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/><circle cx="12" cy="12" r="10"/></svg>
+          <span class="nav-label">Explore</span>
+        </button>
+
+        <button class="nav-center-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+        </button>
+
+        <button class="nav-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span class="nav-label">Calls</span>
+        </button>
+
+        <button class="nav-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span class="nav-label">Profile</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // Subtle parallax on orbs
+  document.addEventListener('mousemove', (e) => {
+    const x = (e.clientX / window.innerWidth - 0.5) * 30;
+    const y = (e.clientY / window.innerHeight - 0.5) * 30;
+    document.querySelector('.orb-1').style.transform = `translate(${x*0.5}px, ${y*0.5}px)`;
+    document.querySelector('.orb-2').style.transform = `translate(${-x*0.4}px, ${-y*0.4}px)`;
+    document.querySelector('.orb-3').style.transform = `translate(${x*0.3}px, ${y*0.6}px)`;
+  });
+
+  // Nav active state
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
