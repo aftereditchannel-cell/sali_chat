@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>سالی چت</title>
 <style>
+/* همان استایل‌های قبلی (بدون تغییر) */
 *{margin:0;padding:0;box-sizing:border-box;}
-
 body{
   font-family:'Segoe UI', Tahoma, sans-serif;
   background:
@@ -21,7 +21,6 @@ body{
   overflow:hidden;
   position:relative;
 }
-
 /* ===== PARTICLES ===== */
 .particle{
   position:fixed;
@@ -38,7 +37,6 @@ body{
   85%{opacity:0.4;}
   100%{transform:translateY(-160px) scale(1.3);opacity:0;}
 }
-
 /* ===== MOUSE GLOW ===== */
 .mouse-glow{
   position:fixed;
@@ -51,7 +49,6 @@ body{
   transition:left .08s ease, top .08s ease;
   z-index:0;
 }
-
 /* ===== CONTAINER ===== */
 .container{
   width:100%;
@@ -60,7 +57,6 @@ body{
   position:relative;
   z-index:10;
 }
-
 /* ===== LOGO ===== */
 .logo{
   text-align:center;
@@ -87,7 +83,6 @@ body{
   color:#a78bfa;
   font-size:12px;
 }
-
 /* ===== GLASS BOX ===== */
 .glass-box{
   background:rgba(255,255,255,0.055);
@@ -100,7 +95,6 @@ body{
     0 0 0 1px rgba(255,255,255,0.07),
     inset 0 1px 0 rgba(255,255,255,0.08);
 }
-
 /* ===== TAB SWITCHER ===== */
 .tabs{
   display:flex;
@@ -131,11 +125,9 @@ body{
   color:#666;
 }
 .tab-btn:not(.active):hover{color:#aaa;}
-
 /* ===== FORM PANEL ===== */
 .panel{display:none;}
 .panel.active{display:block;}
-
 /* ===== FORM GROUPS ===== */
 .form-group{margin-bottom:16px;}
 label{
@@ -167,7 +159,6 @@ input:disabled{
   opacity:0.35;
   cursor:not-allowed;
 }
-
 /* ===== PRIMARY BUTTON ===== */
 .primary-btn{
   width:100%;
@@ -195,7 +186,6 @@ input:disabled{
   transform:none;
   box-shadow:none;
 }
-
 /* ===== DIVIDER ===== */
 .divider{
   display:flex;
@@ -211,7 +201,6 @@ input:disabled{
   height:1px;
   background:rgba(255,255,255,0.07);
 }
-
 /* ===== GOOGLE BTN — DISABLED ===== */
 .google-btn{
   display:flex;
@@ -230,13 +219,11 @@ input:disabled{
   font-family:inherit;
   transition:all .25s ease;
   box-shadow:0 4px 16px rgba(0,0,0,0.3);
-  /* کمرنگ و غیرفعال */
   opacity:0.35;
   filter:grayscale(1);
   pointer-events:none;
 }
 .google-btn img{width:20px;height:20px;}
-
 /* ===== DISABLED NOTICE ===== */
 .disabled-notice{
   text-align:center;
@@ -250,7 +237,6 @@ input:disabled{
   line-height:1.7;
 }
 .disabled-notice span{color:#8b5cf6;}
-
 /* ===== ERROR / SUCCESS MESSAGES ===== */
 .msg{
   padding:11px 14px;
@@ -271,7 +257,6 @@ input:disabled{
   color:#67e8f9;
 }
 .msg.show{display:block;}
-
 /* ===== LOADING OVERLAY ===== */
 #loading-overlay{
   display:none;
@@ -299,7 +284,6 @@ input:disabled{
   font-size:13px;
   font-family:'Segoe UI', Tahoma, sans-serif;
 }
-
 /* ===== EMAIL VERIFY SCREEN ===== */
 #verify-screen{
   display:none;
@@ -361,7 +345,6 @@ input:disabled{
   min-height:18px;
   color:#a78bfa;
 }
-
 /* ===== WEBVIEW WARNING ===== */
 #webview-warning{
   display:none;
@@ -426,7 +409,6 @@ input:disabled{
 </style>
 </head>
 <body>
-
 <!-- Loading -->
 <div id="loading-overlay">
   <div class="spinner"></div>
@@ -471,21 +453,17 @@ input:disabled{
 
 <!-- Main -->
 <div class="container">
-
   <div class="logo">
     <div class="logo-icon">💬</div>
     <h1>سالی چت</h1>
     <span>ورود یا ثبت‌نام</span>
   </div>
-
   <div class="glass-box">
-
     <!-- Tabs -->
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('login')">ورود</button>
       <button class="tab-btn" onclick="switchTab('signup')">ثبت‌نام</button>
     </div>
-
     <!-- ===== LOGIN PANEL ===== -->
     <div class="panel active" id="panel-login">
       <div class="form-group">
@@ -496,11 +474,8 @@ input:disabled{
         <label>رمز عبور</label>
         <input type="password" id="login-password" placeholder="••••••••">
       </div>
-
       <button class="primary-btn" id="login-btn" onclick="loginWithEmail()">ورود</button>
-
       <div class="divider">یا</div>
-
       <!-- Google — غیرفعال -->
       <button class="google-btn" disabled>
         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
@@ -510,10 +485,8 @@ input:disabled{
         ⚠️ در حال حاضر سرویس ورود با گوگل برای ما فعال نشده است.<br>
         لطفاً از <span>ایمیل و رمز عبور</span> استفاده کنید.
       </div>
-
       <div class="msg" id="msg-login"></div>
     </div>
-
     <!-- ===== SIGNUP PANEL ===== -->
     <div class="panel" id="panel-signup">
       <div class="form-group">
@@ -528,11 +501,8 @@ input:disabled{
         <label>رمز عبور (حداقل ۶ کاراکتر)</label>
         <input type="password" id="signup-password" placeholder="••••••••">
       </div>
-
       <button class="primary-btn" id="signup-btn" onclick="signupWithEmail()">ثبت‌نام</button>
-
       <div class="divider">یا</div>
-
       <!-- Google — غیرفعال -->
       <button class="google-btn" disabled>
         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
@@ -542,10 +512,8 @@ input:disabled{
         ⚠️ در حال حاضر سرویس ثبت‌نام با گوگل برای ما فعال نشده است.<br>
         لطفاً از <span>فرم بالا</span> ثبت‌نام کنید.
       </div>
-
       <div class="msg" id="msg-signup"></div>
     </div>
-
   </div>
 </div>
 
@@ -557,7 +525,7 @@ glow.className = 'mouse-glow';
 document.body.appendChild(glow);
 document.addEventListener('mousemove', e => {
   glow.style.left = e.clientX + 'px';
-  glow.style.top  = e.clientY + 'px';
+  glow.style.top = e.clientY + 'px';
 });
 
 /* ---- Particles ---- */
@@ -581,11 +549,9 @@ function switchTab(tab) {
   document.getElementById('panel-signup').classList.toggle('active', tab === 'signup');
   clearMessages();
 }
-
 function clearMessages() {
   document.querySelectorAll('.msg').forEach(m => m.classList.remove('show'));
 }
-
 function showMsg(id, text, type = 'error') {
   const el = document.getElementById(id);
   el.textContent = text;
@@ -600,7 +566,6 @@ function isWebView() {
   if (/iPhone|iPad/.test(ua) && !/Safari/.test(ua) && !/CriOS|FxiOS/.test(ua)) return true;
   return false;
 }
-
 function copyUrl() {
   const url = window.location.href;
   (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject())
@@ -618,7 +583,6 @@ function copyUrl() {
       setTimeout(() => msg.style.display = 'none', 2500);
     });
 }
-
 if (isWebView()) {
   document.getElementById('current-url').textContent = window.location.href;
   document.getElementById('webview-warning').classList.add('active');
@@ -636,23 +600,30 @@ import {
   reload
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 /* ===== Firebase Config ===== */
 const firebaseConfig = {
-  apiKey:            "AIzaSyBjGet-li1hqCmkd7OZkkv5e3GEJ_Zp18M",
-  authDomain:        "salichattest.firebaseapp.com",
-  projectId:         "salichattest",
-  storageBucket:     "salichattest.firebasestorage.app",
+  apiKey: "AIzaSyBjGet-li1hqCmkd7OZkkv5e3GEJ_Zp18M",
+  authDomain: "salichattest.firebaseapp.com",
+  projectId: "salichattest",
+  storageBucket: "salichattest.firebasestorage.app",
   messagingSenderId: "985509042175",
-  appId:             "1:985509042175:web:a29ce14b52956af7acb9ca"
+  appId: "1:985509042175:web:a29ce14b52956af7acb9ca"
 };
 
-const app  = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 /* کاربر فعلی برای صفحه تأیید */
 let pendingUser = null;
-
-const overlay     = document.getElementById('loading-overlay');
+const overlay = document.getElementById('loading-overlay');
 const loadingText = document.getElementById('loading-text');
 
 function setLoading(on, text = 'در حال پردازش...') {
@@ -660,25 +631,54 @@ function setLoading(on, text = 'در حال پردازش...') {
   overlay.classList.toggle('active', on);
 }
 
+async function createUserProfile(user, displayName) {
+  try {
+    const userRef = doc(db, "users", user.uid);
+    await setDoc(userRef, {
+      uid: user.uid,
+      displayName: displayName,
+      email: user.email,
+      photoURL: user.photoURL || null,
+      createdAt: new Date().toISOString(),
+      lastLogin: new Date().toISOString(),
+      // فیلدهای اضافی که بعداً می‌تونی اضافه کنی
+      bio: "",
+      status: "active"
+    }, { merge: true });
+    console.log("پروفایل کاربر در Firestore ذخیره شد.");
+  } catch (error) {
+    console.error("خطا در ذخیره پروفایل:", error);
+  }
+}
+
+async function updateLastLogin(user) {
+  try {
+    const userRef = doc(db, "users", user.uid);
+    await setDoc(userRef, { lastLogin: new Date().toISOString() }, { merge: true });
+  } catch (e) {
+    console.error("خطا در بروزرسانی آخرین ورود:", e);
+  }
+}
+
 function saveAndGo(user) {
   localStorage.setItem("salichat_login", "true");
-  localStorage.setItem("salichat_name",  user.displayName || "");
-  localStorage.setItem("salichat_email", user.email       || "");
-  localStorage.setItem("salichat_photo", user.photoURL    || "");
-  localStorage.setItem("salichat_uid",   user.uid         || "");
+  localStorage.setItem("salichat_name", user.displayName || "");
+  localStorage.setItem("salichat_email", user.email || "");
+  localStorage.setItem("salichat_photo", user.photoURL || "");
+  localStorage.setItem("salichat_uid", user.uid || "");
   location.href = "home.html";
 }
 
 /* ====================================================
-   ثبت‌نام با ایمیل
+   ثبت‌نام با ایمیل + ذخیره در Firestore
    ==================================================== */
 window.signupWithEmail = async function () {
-  const name     = document.getElementById('signup-name').value.trim();
-  const email    = document.getElementById('signup-email').value.trim();
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
   const password = document.getElementById('signup-password').value;
 
-  if (!name)     return showMsg('msg-signup', '⚠️ نام کاربری رو وارد کن.', 'error');
-  if (!email)    return showMsg('msg-signup', '⚠️ ایمیل رو وارد کن.', 'error');
+  if (!name) return showMsg('msg-signup', '⚠️ نام کاربری رو وارد کن.', 'error');
+  if (!email) return showMsg('msg-signup', '⚠️ ایمیل رو وارد کن.', 'error');
   if (password.length < 6) return showMsg('msg-signup', '⚠️ رمز عبور باید حداقل ۶ کاراکتر باشه.', 'error');
 
   clearMessages();
@@ -686,21 +686,19 @@ window.signupWithEmail = async function () {
   document.getElementById('signup-btn').disabled = true;
 
   try {
-    /* ساخت حساب */
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     const user = cred.user;
 
-    /* ذخیره نام نمایشی */
     await updateProfile(user, { displayName: name });
-
-    /* ارسال ایمیل تأیید */
     await sendEmailVerification(user);
+
+    // ذخیره اولیه پروفایل در Firestore (حتی قبل از تأیید ایمیل)
+    await createUserProfile(user, name);
 
     pendingUser = user;
     document.getElementById('verify-email-shown').textContent = email;
     setLoading(false);
     document.getElementById('verify-screen').classList.add('active');
-
   } catch (err) {
     setLoading(false);
     document.getElementById('signup-btn').disabled = false;
@@ -709,13 +707,13 @@ window.signupWithEmail = async function () {
 };
 
 /* ====================================================
-   ورود با ایمیل
+   ورود با ایمیل + چک Firestore
    ==================================================== */
 window.loginWithEmail = async function () {
-  const email    = document.getElementById('login-email').value.trim();
+  const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
 
-  if (!email)    return showMsg('msg-login', '⚠️ ایمیل رو وارد کن.', 'error');
+  if (!email) return showMsg('msg-login', '⚠️ ایمیل رو وارد کن.', 'error');
   if (!password) return showMsg('msg-login', '⚠️ رمز عبور رو وارد کن.', 'error');
 
   clearMessages();
@@ -726,9 +724,7 @@ window.loginWithEmail = async function () {
     const cred = await signInWithEmailAndPassword(auth, email, password);
     const user = cred.user;
 
-    /* بررسی تأیید ایمیل */
     if (!user.emailVerified) {
-      /* ایمیل هنوز تأیید نشده — نشون بده صفحه تأیید */
       pendingUser = user;
       document.getElementById('verify-email-shown').textContent = email;
       setLoading(false);
@@ -737,8 +733,9 @@ window.loginWithEmail = async function () {
       return;
     }
 
+    // بروزرسانی آخرین ورود
+    await updateLastLogin(user);
     saveAndGo(user);
-
   } catch (err) {
     setLoading(false);
     document.getElementById('login-btn').disabled = false;
@@ -749,15 +746,14 @@ window.loginWithEmail = async function () {
 /* ====================================================
    صفحه تأیید ایمیل
    ==================================================== */
-
-/* بررسی اینکه ایمیل تأیید شده یا نه */
 window.checkVerified = async function () {
   if (!pendingUser) return;
   setLoading(true, 'در حال بررسی...');
 
   try {
-    await reload(pendingUser);          /* وضعیت جدید از Firebase بگیر */
+    await reload(pendingUser);
     if (pendingUser.emailVerified) {
+      await updateLastLogin(pendingUser);
       saveAndGo(pendingUser);
     } else {
       setLoading(false);
@@ -769,7 +765,6 @@ window.checkVerified = async function () {
   }
 };
 
-/* ارسال مجدد ایمیل تأیید */
 window.resendVerification = async function () {
   if (!pendingUser) return;
   try {
@@ -781,10 +776,9 @@ window.resendVerification = async function () {
   }
 };
 
-/* لغو و برگشت */
 window.cancelVerify = async function () {
   if (pendingUser) {
-    try { await pendingUser.delete(); } catch (_) { /* اگه نشد مهم نیست */ }
+    try { await pendingUser.delete(); } catch (_) {}
   }
   pendingUser = null;
   document.getElementById('verify-screen').classList.remove('active');
@@ -793,24 +787,22 @@ window.cancelVerify = async function () {
 };
 
 /* ====================================================
-   ترجمه کدهای خطای Firebase به فارسی
+   ترجمه کدهای خطای Firebase
    ==================================================== */
 function translateError(code) {
   switch (code) {
-    case 'auth/email-already-in-use':       return '❌ این ایمیل قبلاً ثبت‌نام شده.';
-    case 'auth/invalid-email':              return '❌ فرمت ایمیل درست نیست.';
-    case 'auth/weak-password':              return '❌ رمز عبور خیلی ساده‌ست. حداقل ۶ کاراکتر.';
-    case 'auth/user-not-found':             return '❌ این ایمیل ثبت‌نام نشده.';
+    case 'auth/email-already-in-use': return '❌ این ایمیل قبلاً ثبت‌نام شده.';
+    case 'auth/invalid-email': return '❌ فرمت ایمیل درست نیست.';
+    case 'auth/weak-password': return '❌ رمز عبور خیلی ساده‌ست. حداقل ۶ کاراکتر.';
+    case 'auth/user-not-found': return '❌ این ایمیل ثبت‌نام نشده.';
     case 'auth/wrong-password':
-    case 'auth/invalid-credential':         return '❌ ایمیل یا رمز عبور اشتباهه.';
-    case 'auth/too-many-requests':          return '⚠️ تلاش زیاد! چند دقیقه صبر کن.';
-    case 'auth/network-request-failed':     return '📶 مشکل اتصال به اینترنت.';
-    case 'auth/operation-not-allowed':      return '⛔ این روش ورود در Firebase فعال نشده. Email/Password رو در Console فعال کن.';
-    default:                                return '❌ خطا: ' + code;
+    case 'auth/invalid-credential': return '❌ ایمیل یا رمز عبور اشتباهه.';
+    case 'auth/too-many-requests': return '⚠️ تلاش زیاد! چند دقیقه صبر کن.';
+    case 'auth/network-request-failed': return '📶 مشکل اتصال به اینترنت.';
+    case 'auth/operation-not-allowed': return '⛔ این روش ورود در Firebase فعال نشده. Email/Password رو در Console فعال کن.';
+    default: return '❌ خطا: ' + code;
   }
 }
-
 </script>
-
 </body>
 </html>
