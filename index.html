@@ -3,10 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-
 body{
   font-family:'Segoe UI';
   background: radial-gradient(circle at 20% 20%, #1a0b3a, transparent 40%),
@@ -18,7 +16,6 @@ body{
   align-items:center;
   overflow:hidden;
 }
-
 body::before{
   content:"";
   position:fixed;
@@ -26,157 +23,95 @@ body::before{
   background:linear-gradient(120deg,rgba(139,92,246,.15),rgba(236,72,153,.1));
   pointer-events:none;
 }
-
-.container{
-  width:100%;
-  max-width:400px;
-  padding:20px;
-}
-
+.container{width:100%;max-width:400px;padding:20px;}
 .glass-box{
   background:rgba(255,255,255,0.06);
   backdrop-filter:blur(30px);
   border-radius:24px;
   padding:30px 22px;
-  box-shadow:
-    0 20px 60px rgba(0,0,0,0.6),
-    inset 0 0 0 1px rgba(255,255,255,0.05);
+  box-shadow:0 20px 60px rgba(0,0,0,0.6),inset 0 0 0 1px rgba(255,255,255,0.05);
 }
-
-h2{
-  color:#fff;
-  margin-bottom:25px;
-  text-align:center;
-  font-size:20px;
-}
-
-.form-group{
-  margin-bottom:18px;
-}
-
-label{
-  color:#aaa;
-  font-size:12px;
-}
-
+h2{color:#fff;margin-bottom:25px;text-align:center;font-size:20px;}
+.form-group{margin-bottom:18px;}
+label{color:#aaa;font-size:12px;}
 input{
-  width:100%;
-  padding:13px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,0.05);
-  margin-top:6px;
-  background:rgba(255,255,255,0.04);
-  color:#fff;
-  opacity:0.4;
-  cursor:not-allowed;
+  width:100%;padding:13px;border-radius:12px;
+  border:1px solid rgba(255,255,255,0.05);margin-top:6px;
+  background:rgba(255,255,255,0.04);color:#fff;opacity:0.4;cursor:not-allowed;
 }
-
-.warning{
-  margin-top:10px;
-  font-size:13px;
-  color:#ef4444;
-  text-align:center;
-}
-
+.warning{margin-top:10px;font-size:13px;color:#ef4444;text-align:center;}
 .google-btn{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  padding:13px;
-  border-radius:14px;
-  background:rgba(255,255,255,0.9);
-  color:#111;
-  font-weight:600;
-  cursor:pointer;
-  margin-top:25px;
-  transition:.25s;
-  border:none;
-  width:100%;
-  font-size:15px;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:13px;border-radius:14px;background:rgba(255,255,255,0.9);
+  color:#111;font-weight:600;cursor:pointer;margin-top:25px;transition:.25s;
+  border:none;width:100%;font-size:15px;
 }
-
-.google-btn:hover{ transform:translateY(-2px); }
-.google-btn:active{ transform:translateY(0); }
-
-.google-btn img{ width:20px; }
-
+.google-btn:hover{transform:translateY(-2px);}
+.google-btn img{width:20px;}
 .cta-btn{
-  width:100%;
-  margin-top:22px;
-  padding:15px;
-  border:none;
-  border-radius:16px;
+  width:100%;margin-top:22px;padding:15px;border:none;border-radius:16px;
   background:linear-gradient(90deg,#8b5cf6,#ec4899,#22d3ee);
-  color:#fff;
-  font-weight:bold;
-  font-size:15px;
-  opacity:.4;
-  cursor:not-allowed;
+  color:#fff;font-weight:bold;font-size:15px;opacity:.4;cursor:not-allowed;
 }
-
-.login-link{
-  text-align:center;
-  color:#a78bfa;
-  cursor:pointer;
-  margin-top:18px;
-  font-size:13px;
-}
-
+.login-link{text-align:center;color:#a78bfa;cursor:pointer;margin-top:18px;font-size:13px;}
 .mouse-glow{
-  position:fixed;
-  width:300px;
-  height:300px;
-  border-radius:50%;
-  pointer-events:none;
+  position:fixed;width:300px;height:300px;border-radius:50%;pointer-events:none;
   background:radial-gradient(circle,rgba(139,92,246,.25),transparent 70%);
-  filter:blur(20px);
-  transform:translate(-50%,-50%);
+  filter:blur(20px);transform:translate(-50%,-50%);
 }
-
 .particle{
-  position:fixed;
-  width:5px;
-  height:5px;
+  position:fixed;width:5px;height:5px;
   background:linear-gradient(45deg,#8b5cf6,#22d3ee);
-  border-radius:50%;
-  opacity:.7;
-  animation:floatUp 7s linear infinite;
+  border-radius:50%;opacity:.7;animation:floatUp 7s linear infinite;
 }
-
 @keyframes floatUp{
   from{transform:translateY(0) scale(.8);opacity:0;}
   20%{opacity:1;}
   to{transform:translateY(-140px) scale(1.2);opacity:0;}
 }
-
-/* Loading overlay */
+/* Loading */
 #loading-overlay{
-  display:none;
-  position:fixed;
-  inset:0;
+  display:none;position:fixed;inset:0;
   background:linear-gradient(135deg,#020617,#0f172a,#020617);
-  z-index:9999;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  gap:16px;
+  z-index:9999;justify-content:center;align-items:center;flex-direction:column;gap:16px;
 }
-#loading-overlay.active{ display:flex; }
-
+#loading-overlay.active{display:flex;}
 .spinner{
-  width:48px;
-  height:48px;
-  border:3px solid rgba(139,92,246,0.2);
-  border-top-color:#8b5cf6;
-  border-radius:50%;
-  animation:spin .8s linear infinite;
+  width:48px;height:48px;border:3px solid rgba(139,92,246,0.2);
+  border-top-color:#8b5cf6;border-radius:50%;animation:spin .8s linear infinite;
 }
-@keyframes spin{ to{transform:rotate(360deg);} }
-#loading-overlay p{ color:#a78bfa; font-size:14px; }
+@keyframes spin{to{transform:rotate(360deg);}}
+#loading-overlay p{color:#a78bfa;font-size:14px;}
+/* WebView warning */
+#webview-warning{
+  display:none;position:fixed;inset:0;
+  background:linear-gradient(135deg,#020617,#0f172a,#020617);
+  z-index:9998;justify-content:center;align-items:center;padding:30px;
+}
+#webview-warning.active{display:flex;}
+.wv-box{
+  background:rgba(255,255,255,0.06);backdrop-filter:blur(30px);
+  border-radius:24px;padding:30px 22px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6),inset 0 0 0 1px rgba(255,255,255,0.08);
+  text-align:center;max-width:340px;width:100%;
+}
+.wv-icon{font-size:48px;margin-bottom:16px;}
+.wv-box h3{color:#fff;font-size:18px;margin-bottom:12px;}
+.wv-box p{color:#aaa;font-size:13px;line-height:1.8;margin-bottom:20px;}
+.wv-url{
+  background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);
+  border-radius:10px;padding:10px 14px;color:#a78bfa;
+  font-size:13px;word-break:break-all;margin-bottom:20px;
+}
+.copy-btn{
+  width:100%;padding:13px;border:none;border-radius:14px;
+  background:linear-gradient(90deg,#8b5cf6,#ec4899);
+  color:#fff;font-weight:600;font-size:14px;cursor:pointer;
+}
+.copy-btn:active{opacity:.8;}
+.copied-msg{color:#22d3ee;font-size:12px;margin-top:10px;display:none;}
 </style>
 </head>
-
 <body>
 
 <div id="loading-overlay">
@@ -184,36 +119,46 @@ input{
   <p>در حال ورود با گوگل...</p>
 </div>
 
+<!-- هشدار WebView -->
+<div id="webview-warning">
+  <div class="wv-box">
+    <div class="wv-icon">🌐</div>
+    <h3>یه قدم مونده!</h3>
+    <p>
+      برای ورود با گوگل، باید این صفحه رو توی
+      <strong style="color:#fff;">Chrome</strong> یا
+      <strong style="color:#fff;">Safari</strong>
+      باز کنی.<br><br>
+      لینک زیر رو کپی کن و توی مرورگرت بزن:
+    </p>
+    <div class="wv-url" id="current-url"></div>
+    <button class="copy-btn" onclick="copyUrl()">کپی لینک</button>
+    <div class="copied-msg" id="copied-msg">✓ کپی شد!</div>
+  </div>
+</div>
+
 <div class="container">
   <div class="glass-box">
-
     <h2>ثبت نام توی سالی چت</h2>
-
     <div class="form-group">
       <label>نام کاربریت چی بود؟</label>
       <input placeholder="@Amir" disabled>
     </div>
-
     <div class="form-group">
       <label>رمز عبورتم بزن لطفن</label>
       <input type="password" disabled>
     </div>
-
     <div class="warning">
       به دلایل امنیتی، فعلاً فقط می‌تونی با گوگل ثبت‌نام یا وارد بشی
     </div>
-
     <div class="google-btn" onclick="loginWithGoogle()">
       <img src="https://www.svgrepo.com/show/475656/google-color.svg">
       ثبت‌نام با گوگل
     </div>
-
     <button class="cta-btn" disabled>ثبت‌نام</button>
-
     <p class="login-link" onclick="location.href='SaliChat_SignUp_Final.html'">
       قبلاً ثبت‌نام کردی؟ پس بزن روم
     </p>
-
   </div>
 </div>
 
@@ -221,12 +166,10 @@ input{
 const glow = document.createElement('div');
 glow.className = 'mouse-glow';
 document.body.appendChild(glow);
-
 document.addEventListener('mousemove', e=>{
-  glow.style.left = e.clientX + 'px';
-  glow.style.top = e.clientY + 'px';
+  glow.style.left = e.clientX+'px';
+  glow.style.top = e.clientY+'px';
 });
-
 setInterval(()=>{
   const p = document.createElement('div');
   p.className='particle';
@@ -236,20 +179,54 @@ setInterval(()=>{
   setTimeout(()=>p.remove(),6000);
 },200);
 
-// تشخیص موبایل
+function isWebView(){
+  const ua = navigator.userAgent;
+  // اندروید WebView
+  if(/wv/.test(ua) && /Android/.test(ua)) return true;
+  // اینستاگرام، تلگرام، فیسبوک و بقیه in-app browsers
+  if(/Instagram|FBAN|FBAV|Twitter|Line\/|Musical|Snapchat|TikTok|WhatsApp|Telegram/.test(ua)) return true;
+  // iOS WebView (نه Safari واقعی)
+  if(/iPhone|iPad/.test(ua) && !/Safari/.test(ua)) return true;
+  if(/iPhone|iPad/.test(ua) && /CriOS|FxiOS|OPiOS|mercury/.test(ua)) return false; // Chrome/Firefox روی iOS
+  return false;
+}
+
 function isMobile(){
-  return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+function copyUrl(){
+  const url = window.location.href;
+  navigator.clipboard.writeText(url).then(()=>{
+    const msg = document.getElementById('copied-msg');
+    msg.style.display='block';
+    setTimeout(()=>msg.style.display='none',2500);
+  }).catch(()=>{
+    // fallback
+    const el = document.createElement('textarea');
+    el.value = url;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    const msg = document.getElementById('copied-msg');
+    msg.style.display='block';
+    setTimeout(()=>msg.style.display='none',2500);
+  });
+}
+
+// اگه WebView بود، فوری هشدار بده
+if(isWebView()){
+  document.getElementById('current-url').textContent = window.location.href;
+  document.getElementById('webview-warning').classList.add('active');
 }
 </script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult
+  getAuth, GoogleAuthProvider,
+  signInWithPopup, signInWithRedirect, getRedirectResult
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -266,53 +243,42 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const overlay = document.getElementById('loading-overlay');
 
-function saveUserAndRedirect(user){
-  localStorage.setItem("login", "true");
-  localStorage.setItem("userName", user.displayName || "");
-  localStorage.setItem("userEmail", user.email || "");
-  localStorage.setItem("userPhoto", user.photoURL || "");
-  location.href = "home.html";
+function saveAndGo(user){
+  localStorage.setItem("login","true");
+  localStorage.setItem("userName", user.displayName||"");
+  localStorage.setItem("userEmail", user.email||"");
+  localStorage.setItem("userPhoto", user.photoURL||"");
+  location.href="home.html";
 }
 
-// اگه از redirect برگشتیم نتیجه رو بگیر (فقط روی موبایل کار میکنه)
+// چک redirect result (موبایل)
 overlay.classList.add('active');
-getRedirectResult(auth)
-  .then(result => {
-    if(result && result.user){
-      saveUserAndRedirect(result.user);
-    } else {
-      overlay.classList.remove('active');
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    overlay.classList.remove('active');
-  });
+getRedirectResult(auth).then(result=>{
+  if(result?.user) saveAndGo(result.user);
+  else overlay.classList.remove('active');
+}).catch(err=>{
+  console.error(err);
+  overlay.classList.remove('active');
+});
 
 window.loginWithGoogle = async function(){
-  const mobile = window.isMobile ? isMobile() : /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  // اگه WebView باشه اصلاً تلاش نکن
+  if(window.isWebView && isWebView()) return;
 
-  if(mobile){
-    // موبایل: redirect تمام صفحه
+  if(isMobile()){
     overlay.classList.add('active');
-    try{
-      await signInWithRedirect(auth, provider);
-    } catch(err){
-      overlay.classList.remove('active');
-      alert("خطا: " + err.message);
-    }
+    try{ await signInWithRedirect(auth, provider); }
+    catch(err){ overlay.classList.remove('active'); alert("خطا: "+err.message); }
   } else {
-    // دسکتاپ: popup معمولی
     try{
       const result = await signInWithPopup(auth, provider);
-      saveUserAndRedirect(result.user);
+      saveAndGo(result.user);
     } catch(err){
-      if(err.code === "auth/popup-blocked"){
-        // اگه popup بلاک بود، برو سراغ redirect
+      if(err.code==="auth/popup-blocked"){
         overlay.classList.add('active');
         await signInWithRedirect(auth, provider);
-      } else if(err.code !== "auth/cancelled-popup-request" && err.code !== "auth/popup-closed-by-user"){
-        alert("خطا در ورود با گوگل: " + err.message);
+      } else if(err.code!=="auth/cancelled-popup-request" && err.code!=="auth/popup-closed-by-user"){
+        alert("خطا در ورود: "+err.message);
       }
     }
   }
