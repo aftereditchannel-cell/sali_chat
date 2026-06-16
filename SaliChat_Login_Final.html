@@ -3,396 +3,260 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>👀 Sali Login</title>
+<title>👀 سالی چت</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
 <style>
-/* ریست و استایل پایه */
-*{margin:0;padding:0;box-sizing:border-box;}
-body{
-  font-family:'Segoe UI', Tahoma, sans-serif;
-  background:
-    radial-gradient(circle at 15% 15%, rgba(88,28,220,0.45) 0%, transparent 45%),
-    radial-gradient(circle at 85% 85%, rgba(139,92,246,0.35) 0%, transparent 45%),
-    radial-gradient(circle at 80% 10%, rgba(236,72,153,0.2) 0%, transparent 35%),
-    linear-gradient(135deg, #020617 0%, #0f172a 50%, #020617 100%);
-  min-height:100dvh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  overflow-y:auto;
-  position:relative;
-  padding:20px 0;
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: rgb(5, 5, 16);
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
 }
-/* Particles */
-.particle{
-  position:fixed;
-  width:4px;height:4px;
-  border-radius:50%;
-  background:linear-gradient(45deg,#8b5cf6,#22d3ee);
-  opacity:0;
-  animation:floatUp 8s linear infinite;
-  pointer-events:none;
+
+/* Phone Frame */
+.phone {
+  width: 390px;
+  height: 844px;
+  background: rgb(10, 10, 20);
+  border-radius: 44px;
+  box-shadow: 
+    rgba(168, 85, 247, 0.15) 0px 0px 0px 1px,
+    rgba(0, 0, 0, 0.8) 0px 40px 120px,
+    rgba(168, 85, 247, 0.1) 0px 0px 60px inset;
+  overflow: hidden;
+  position: relative;
+  border: 8px solid #111;
 }
-@keyframes floatUp{
-  0%{transform:translateY(0) scale(0.5);opacity:0;}
-  15%{opacity:0.8;}
-  85%{opacity:0.4;}
-  100%{transform:translateY(-160px) scale(1.3);opacity:0;}
+
+/* Status Bar */
+.status-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 44px;
+  padding-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 28px;
+  color: rgb(155, 142, 196);
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 50;
 }
-/* Mouse Glow */
-.mouse-glow{
-  position:fixed;
-  width:350px;height:350px;
-  border-radius:50%;
-  pointer-events:none;
-  background:radial-gradient(circle, rgba(139,92,246,0.2) 0%, transparent 70%);
-  filter:blur(25px);
-  transform:translate(-50%,-50%);
-  transition:left .08s ease, top .08s ease;
-  z-index:0;
+
+/* Main Content */
+.content {
+  height: 100%;
+  background: linear-gradient(160deg, rgb(13, 8, 32) 0%, rgb(10, 10, 20) 100%);
+  display: flex;
+  flex-direction: column;
+  padding: 60px 24px 40px;
+  position: relative;
 }
-/* Container - ریسپانسیو */
-.container{
-  width:100%;
-  max-width:420px;
-  padding:15px;
-  position:relative;
-  z-index:10;
-}
+
 /* Logo */
-.logo{
-  text-align:center;
-  margin-bottom:24px;
+.logo {
+  text-align: center;
+  margin-bottom: 32px;
 }
-.logo-icon{
-  width:56px;height:56px;
-  background:linear-gradient(135deg,#8b5cf6,#ec4899);
-  border-radius:18px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  font-size:26px;
-  margin-bottom:10px;
-  box-shadow:0 8px 25px rgba(139,92,246,0.4);
+.logo-icon {
+  width: 68px;
+  height: 68px;
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 16px;
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
 }
-.logo h1{
-  color:#fff;
-  font-size:18px;
-  font-weight:700;
-  letter-spacing:0.5px;
-}
-.logo span{
-  color:#a78bfa;
-  font-size:12px;
-}
-/* Glass Box */
-.glass-box{
-  background:rgba(255,255,255,0.055);
-  backdrop-filter:blur(40px);
-  border-radius:28px;
-  padding:28px 20px 24px;
-  box-shadow:0 25px 60px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.07);
-}
+
 /* Tabs */
-.tabs{
-  display:flex;
-  background:rgba(0,0,0,0.3);
-  border-radius:14px;
-  padding:4px;
-  margin-bottom:24px;
-  gap:4px;
+.tabs {
+  display: flex;
+  background: rgba(0,0,0,0.3);
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 28px;
 }
-.tab-btn{
-  flex:1;
-  padding:11px 8px;
-  border:none;
-  border-radius:10px;
-  font-size:13px;
-  font-weight:600;
-  cursor:pointer;
-  transition:all .25s ease;
-  line-height:1.3;
+.tab-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
 }
-.tab-btn.active{
-  background:linear-gradient(90deg,#8b5cf6,#ec4899);
-  color:#fff;
-  box-shadow:0 4px 14px rgba(139,92,246,0.4);
+.tab-btn.active {
+  background: linear-gradient(90deg, #a855f7, #ec4899);
+  color: white;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
 }
-.tab-btn:not(.active){
-  background:transparent;
-  color:#666;
-}
+
 /* Form */
-.panel{display:none;}
-.panel.active{display:block;}
-.form-group{margin-bottom:16px;}
-label{
-  color:#9ca3af;
-  font-size:12.5px;
-  font-weight:500;
-  display:block;
-  margin-bottom:6px;
+.form-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
-input{
-  width:100%;
-  padding:13px 15px;
-  border-radius:13px;
-  border:1px solid rgba(255,255,255,0.07);
-  background:rgba(255,255,255,0.05);
-  color:#fff;
-  font-size:14px;
-  outline:none;
+.input-group label {
+  display: block;
+  color: #9b8ec4;
+  font-size: 13px;
+  margin-bottom: 8px;
+  font-weight: 500;
 }
-input:focus{
-  border-color:rgba(139,92,246,0.5);
-  box-shadow:0 0 0 3px rgba(139,92,246,0.12);
+.input-wrapper {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
 }
-/* Buttons */
-.primary-btn{
-  width:100%;
-  padding:13px;
-  border:none;
-  border-radius:14px;
-  background:linear-gradient(90deg,#8b5cf6,#ec4899);
-  color:#fff;
-  font-weight:600;
-  font-size:14px;
-  cursor:pointer;
-  margin-top:4px;
+input {
+  width: 100%;
+  padding: 16px 18px;
+  background: transparent;
+  border: none;
+  color: #f0eeff;
+  font-size: 15px;
 }
-.primary-btn:disabled{
-  opacity:0.45;
-  cursor:not-allowed;
+input::placeholder { color: #9b8ec4; }
+
+/* Button */
+.primary-btn {
+  margin-top: 8px;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(168, 85, 247, 0.4);
+  cursor: pointer;
+  transition: all 0.2s;
 }
-.google-btn{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  padding:13px;
-  border-radius:14px;
-  background:rgba(255,255,255,0.92);
-  color:#1f2937;
-  font-weight:600;
-  cursor:pointer;
-  width:100%;
-  border:none;
-  font-size:14px;
-  margin-top:10px;
+.primary-btn:hover { transform: translateY(-2px); }
+
+/* Divider & Social */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #9b8ec4;
+  font-size: 13px;
+  margin: 12px 0;
 }
-.google-btn:hover{
-  transform:translateY(-2px);
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.08);
 }
-.google-btn img{width:20px;height:20px;}
-/* Messages */
-.msg{
-  padding:11px 14px;
-  border-radius:11px;
-  font-size:12.5px;
-  margin-top:14px;
-  display:none;
+.socials {
+  display: flex;
+  gap: 12px;
 }
-.msg.error{
-  background:rgba(239,68,68,0.12);
-  border:1px solid rgba(239,68,68,0.25);
-  color:#fca5a5;
+.social-btn {
+  flex: 1;
+  padding: 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  color: #f0eeff;
+  font-size: 18px;
+  cursor: pointer;
 }
-.msg.show{display:block;}
-/* Loading */
-#loading-overlay{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(2,6,23,0.85);
-  backdrop-filter:blur(8px);
-  z-index:9999;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  gap:16px;
+.social-btn:hover { background: rgba(255,255,255,0.12); }
+
+/* Footer */
+.footer {
+  text-align: center;
+  color: #9b8ec4;
+  font-size: 14px;
+  margin-top: auto;
 }
-#loading-overlay.active{display:flex;}
-.spinner{
-  width:44px;height:44px;
-  border:3px solid rgba(139,92,246,0.15);
-  border-top-color:#8b5cf6;
-  border-radius:50%;
-  animation:spin .75s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg);}}
-/* Verify Screen */
-#verify-screen{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:radial-gradient(circle at 30% 30%, rgba(88,28,220,0.4), transparent 50%), linear-gradient(135deg,#020617,#0f172a);
-  z-index:9997;
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-}
-#verify-screen.active{display:flex;}
-.verify-box{
-  background:rgba(255,255,255,0.06);
-  backdrop-filter:blur(40px);
-  border-radius:28px;
-  padding:32px 24px;
-  box-shadow:0 25px 60px rgba(0,0,0,0.65);
-  text-align:center;
-  max-width:360px;
-  width:100%;
-}
+.footer a { color: #a855f7; font-weight: 600; }
 </style>
 </head>
 <body>
-<!-- Loading Overlay -->
-<div id="loading-overlay">
-  <div class="spinner"></div>
-  <p id="loading-text">در حال پردازش...</p>
-</div>
-<!-- Email Verify Screen -->
-<div id="verify-screen">
-  <div class="verify-box">
-    <span class="verify-icon" style="font-size:56px;display:block;margin-bottom:18px;">📧</span>
-    <h3 style="color:#fff;font-size:19px;margin-bottom:10px;">ایمیلت رو تأیید کن</h3>
-    <p style="color:#9ca3af;font-size:13px;line-height:1.85;margin-bottom:22px;">
-      یه ایمیل تأیید به آدرس<br>
-      <strong id="verify-email-shown"></strong><br>
-      فرستادیم. روی لینک توی ایمیل کلیک کن.
-    </p>
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      <button class="primary-btn" onclick="checkVerified()">✅ تأیید کردم، بزن بریم</button>
-      <button onclick="resendVerification()" style="padding:11px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:#9ca3af;border-radius:12px;cursor:pointer;">📨 یه بار دیگه بفرست لطفا</button>
-      <button onclick="cancelVerify()" style="padding:11px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:#9ca3af;border-radius:12px;cursor:pointer;">↩ برگردیم عقب</button>
+
+<div class="phone">
+  <div class="status-bar">
+    <span>۹:۴۱</span>
+    <div>●●● 🔋</div>
+  </div>
+
+  <div class="content">
+    <div class="logo">
+      <div class="logo-icon">💜</div>
+      <h1>خوش آمدی</h1>
+      <p style="color:#9b8ec4; font-size:15px;">به سالی چت</p>
     </div>
-    <div id="verify-msg" style="font-size:12px;margin-top:12px;color:#a78bfa;"></div>
-  </div>
-</div>
-<div class="container">
-  <div class="logo">
-    <div class="logo-icon">👀</div>
-    <h1>سالی چت</h1>
-    <span>ورود به دنیای جدید</span>
-  </div>
-  <div class="glass-box">
+
     <!-- Tabs -->
     <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('login')">از اون قدیمی هاشم</button>
-      <button class="tab-btn" onclick="switchTab('signup')">کاربر جدیدم</button>
+      <button class="tab-btn active" onclick="switchTab(0)">ورود</button>
+      <button class="tab-btn" onclick="switchTab(1)">ثبت‌نام</button>
     </div>
-    <!-- Login Panel -->
-    <div class="panel active" id="panel-login">
-      <div class="form-group">
-        <label>آدرس ایمیل لطفا🥱</label>
-        <input type="email" id="login-email" placeholder="email@example.com">
+
+    <!-- Login Form -->
+    <div id="login-form" class="form-container">
+      <div class="input-group">
+        <label>نام کاربری یا ایمیل</label>
+        <div class="input-wrapper"><input type="email" id="login-email" placeholder="example@email.com"></div>
       </div>
-      <div class="form-group">
-        <label>یه رمز بزار دزد زیادههه 🥷</label>
-        <input type="password" id="login-password" placeholder="••••••••">
+      <div class="input-group">
+        <label>رمز عبور</label>
+        <div class="input-wrapper"><input type="password" id="login-password" placeholder="••••••••"></div>
       </div>
-      <button class="primary-btn" id="login-btn" onclick="loginWithEmail()">لتس گوو 🫠</button>
-     
-      <div class="divider" style="display:flex;align-items:center;gap:12px;margin:20px 0;color:#4b5563;font-size:12px;">
-        <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
-        <span>و یا</span>
-        <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
-      </div>
-     
-      <button class="google-btn" onclick="signInWithGoogle()">
-        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
-        ورود با گوگول 🥰
-      </button>
-      <div class="msg" id="msg-login"></div>
+      <button class="primary-btn" onclick="loginWithEmail()">ورود به حساب</button>
+      
+      <div class="divider">یا</div>
+      
+      <button class="social-btn" onclick="signInWithGoogle()">G ورود با گوگل</button>
     </div>
-    <!-- Signup Panel -->
-    <div class="panel" id="panel-signup">
-      <div class="form-group">
-        <label>چی صدات کنیم هوم؟ 🤔</label>
-        <input type="text" id="signup-name" placeholder="مثلاً: Amir">
+
+    <!-- Signup Form -->
+    <div id="signup-form" class="form-container" style="display:none;">
+      <div class="input-group">
+        <label>نام و نام خانوادگی</label>
+        <div class="input-wrapper"><input type="text" id="signup-name" placeholder="امیر رضایی"></div>
       </div>
-      <div class="form-group">
-        <label>یه ایمیل بم بده 📧</label>
-        <input type="email" id="signup-email" placeholder="email@example.com">
+      <div class="input-group">
+        <label>ایمیل</label>
+        <div class="input-wrapper"><input type="email" id="signup-email" placeholder="example@email.com"></div>
       </div>
-      <div class="form-group">
-        <label>رمز عبور (حداقل ۶ کاراکتر عاموو)🔐</label>
-        <input type="password" id="signup-password" placeholder="••••••••">
+      <div class="input-group">
+        <label>رمز عبور</label>
+        <div class="input-wrapper"><input type="password" id="signup-password" placeholder="حداقل ۶ کاراکتر"></div>
       </div>
-      <button class="primary-btn" id="signup-btn" onclick="signupWithEmail()">بزن بریم🕺</button>
-     
-      <div class="divider" style="display:flex;align-items:center;gap:12px;margin:20px 0;color:#4b5563;font-size:12px;">
-        <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
-        <span>یا</span>
-        <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
-      </div>
-     
-      <button class="google-btn" onclick="signInWithGoogle()">
-        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
-        ثبت‌نام با گوگول 😘
-      </button>
-      <div class="msg" id="msg-signup"></div>
+      <button class="primary-btn" onclick="signupWithEmail()">ثبت‌نام</button>
+      
+      <div class="divider">یا</div>
+      
+      <button class="social-btn" onclick="signInWithGoogle()">G ثبت‌نام با گوگل</button>
+    </div>
+
+    <div class="footer">
+      <span id="footer-text">حساب نداری؟</span> 
+      <a href="#" id="switch-link" onclick="switchTab(1)">ثبت‌نام کن</a>
     </div>
   </div>
 </div>
 
 <script>
-// Mouse glow + Particles
-const glow = document.createElement('div');
-glow.className = 'mouse-glow';
-document.body.appendChild(glow);
-document.addEventListener('mousemove', e => {
-  glow.style.left = e.clientX + 'px';
-  glow.style.top = e.clientY + 'px';
-});
-setInterval(() => {
-  const p = document.createElement('div');
-  p.className = 'particle';
-  p.style.left = (Math.random() * 100) + 'vw';
-  p.style.bottom = '-10px';
-  p.style.animationDuration = (6 + Math.random() * 5) + 's';
-  document.body.appendChild(p);
-  setTimeout(() => p.remove(), 12000);
-}, 300);
-
-function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach((b, i) => {
-    b.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'signup' && i === 1));
-  });
-  document.getElementById('panel-login').classList.toggle('active', tab === 'login');
-  document.getElementById('panel-signup').classList.toggle('active', tab === 'signup');
-  clearMessages();
-}
-
-function clearMessages() {
-  document.querySelectorAll('.msg').forEach(m => m.classList.remove('show'));
-}
-
-function showMsg(id, text, type = 'error') {
-  const el = document.getElementById(id);
-  el.textContent = text;
-  el.className = `msg ${type} show`;
-}
-</script>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  signInWithRedirect,
-  GoogleAuthProvider,
-  sendEmailVerification,
-  updateProfile,
-  reload
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyBjGet-li1hqCmkd7OZkkv5e3GEJ_Zp18M",
   authDomain: "salichattest.firebaseapp.com",
@@ -402,252 +266,109 @@ const firebaseConfig = {
   appId: "1:985509042175:web:a29ce14b52956af7acb9ca"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const googleProvider = new GoogleAuthProvider();
-googleProvider.setCustomParameters({ prompt: 'select_account' });
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-let pendingUser = null;
-const overlay = document.getElementById('loading-overlay');
-const loadingText = document.getElementById('loading-text');
-
-function setLoading(on, text = 'در حال پردازش...') {
-  loadingText.textContent = text;
-  overlay.classList.toggle('active', on);
+function switchTab(tab) {
+  document.getElementById('login-form').style.display = tab === 0 ? 'flex' : 'none';
+  document.getElementById('signup-form').style.display = tab === 1 ? 'flex' : 'none';
+  
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === tab);
+  });
+  
+  document.getElementById('footer-text').textContent = tab === 0 ? 'حساب نداری؟' : 'حساب داری؟';
+  document.getElementById('switch-link').textContent = tab === 0 ? 'ثبت‌نام کن' : 'ورود کن';
+  document.getElementById('switch-link').onclick = () => switchTab(tab === 0 ? 1 : 0);
 }
 
-// ذخیره پروفایل ثبت‌نام (users)
-async function saveUserProfile(user, displayName, method = "email", password = null) {
+// Login with Email
+async function loginWithEmail() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  
+  if (!email || !password) return alert("ایمیل و رمز عبور را وارد کنید");
+  
   try {
-    const collectionName = method === "google" ? "google_users" : "users";
-    const userRef = doc(db, collectionName, user.uid);
-    
-    const data = {
-      uid: user.uid,
-      displayName: displayName || user.displayName || "کاربر جدید",
-      email: user.email || null,
-      photoURL: user.photoURL || null,
-      method: method,
-      createdAt: new Date().toISOString(),
-      lastLogin: new Date().toISOString(),
-      bio: "",
-      status: "active",
-    };
-
-    if (method === "email" && password) {
-      data.password = password; // رمز به صورت plain text (درخواست شما)
-    }
-
-    await setDoc(userRef, data, { merge: true });
-    console.log(`✅ ثبت‌نام/پروفایل ذخیره شد در ${collectionName} | ایمیل: ${user.email}`);
-    return true;
-  } catch (error) {
-    console.error("خطا در ذخیره پروفایل:", error);
-    return false;
+    const userCred = await auth.signInWithEmailAndPassword(email, password);
+    alert("✅ ورود با موفقیت انجام شد!");
+    window.location.href = "home.html"; // یا هر صفحه‌ای که می‌خوای
+  } catch (err) {
+    alert("❌ " + err.message);
   }
 }
 
-// ذخیره لاگین جداگانه (logins) — به‌روزرسانی موجود یا ایجاد جدید
-async function saveLoginEntry(user) {
-  try {
-    const loginRef = doc(db, "logins", user.uid); // یک سند per کاربر
-    const existing = await getDoc(loginRef);
-    
-    const loginData = {
-      uid: user.uid,
-      displayName: user.displayName || "نامشخص",
-      email: user.email,
-      lastLogin: new Date().toISOString(),
-      loginCount: (existing.exists() ? (existing.data().loginCount || 0) : 0) + 1,
-      loginHistory: existing.exists() 
-        ? [...(existing.data().loginHistory || []), new Date().toISOString()] 
-        : [new Date().toISOString()]
-    };
-
-    await setDoc(loginRef, loginData, { merge: true });
-    console.log(`✅ لاگین ذخیره/به‌روزرسانی شد برای ${user.displayName || user.email}`);
-    return true;
-  } catch (e) {
-    console.error("خطا در ذخیره لاگین:", e);
-    return false;
-  }
-}
-
-function saveAndGo(user) {
-  localStorage.setItem("salichat_login", "true");
-  localStorage.setItem("salichat_name", user.displayName || "");
-  localStorage.setItem("salichat_email", user.email || "");
-  localStorage.setItem("salichat_photo", user.photoURL || "");
-  localStorage.setItem("salichat_uid", user.uid || "");
-  location.href = "home.html";
-}
-
-// ثبت‌نام با ایمیل
-window.signupWithEmail = async function () {
+// Signup with Email
+async function signupWithEmail() {
   const name = document.getElementById('signup-name').value.trim();
   const email = document.getElementById('signup-email').value.trim();
   const password = document.getElementById('signup-password').value;
-
-  if (!name || !email || password.length < 6) {
-    return showMsg('msg-signup', '⚠️ همه فیلدها را پر کنید.', 'error');
-  }
-
-  setLoading(true, 'در حال ثبت‌نام...');
-  document.getElementById('signup-btn').disabled = true;
-
-  try {
-    const cred = await createUserWithEmailAndPassword(auth, email, password);
-    const user = cred.user;
-    await updateProfile(user, { displayName: name });
-    await sendEmailVerification(user);
-    
-    await saveUserProfile(user, name, "email", password); // ذخیره رمز plain
-    
-    pendingUser = user;
-    document.getElementById('verify-email-shown').textContent = email;
-    setLoading(false);
-    document.getElementById('verify-screen').classList.add('active');
-  } catch (err) {
-    setLoading(false);
-    document.getElementById('signup-btn').disabled = false;
-    showMsg('msg-signup', translateError(err.code), 'error');
-  }
-};
-
-// ورود با ایمیل
-window.loginWithEmail = async function () {
-  const email = document.getElementById('login-email').value.trim();
-  const password = document.getElementById('login-password').value;
-
-  if (!email || !password) {
-    return showMsg('msg-login', '⚠️ ایمیل و رمز عبور را وارد کنید.', 'error');
-  }
-
-  setLoading(true, 'در حال ورود...');
-  document.getElementById('login-btn').disabled = true;
-
-  try {
-    const cred = await signInWithEmailAndPassword(auth, email, password);
-    const user = cred.user;
-
-    if (!user.emailVerified) {
-      pendingUser = user;
-      document.getElementById('verify-email-shown').textContent = email;
-      setLoading(false);
-      document.getElementById('verify-screen').classList.add('active');
-      return;
-    }
-
-    // ذخیره لاگین جداگانه (به‌روزرسانی سند موجود)
-    await saveLoginEntry(user);
-    
-    // به‌روزرسانی lastLogin در users
-    const userRef = doc(db, "users", user.uid);
-    await setDoc(userRef, { lastLogin: new Date().toISOString() }, { merge: true });
-
-    saveAndGo(user);
-  } catch (err) {
-    setLoading(false);
-    document.getElementById('login-btn').disabled = false;
-    showMsg('msg-login', translateError(err.code), 'error');
-  }
-};
-
-// ورود با گوگل
-window.signInWithGoogle = async function () {
-  setLoading(true, 'در حال اتصال به گوگل...');
-  clearMessages();
-  try {
-    const result = await signInWithPopup(auth, googleProvider);
-    await handleGoogleSuccess(result.user);
-  } catch (error) {
-    console.warn("Popup Error:", error.code);
-    if (error.code === 'auth/popup-blocked' || error.code === 'auth/operation-not-allowed') {
-      try {
-        await signInWithRedirect(auth, googleProvider);
-      } catch (e) {
-        setLoading(false);
-        showMsg('msg-login', '❌ لطفاً پاپ‌آپ مرورگر را فعال کنید.', 'error');
-      }
-    } else {
-      setLoading(false);
-      showMsg('msg-login', translateError(error.code), 'error');
-    }
-  }
-};
-
-async function handleGoogleSuccess(user) {
-  if (!user) return;
   
-  const success = await saveUserProfile(user, user.displayName, "google");
-  if (success) {
-    await saveLoginEntry(user);
-    await updateLastLogin(user);
-    saveAndGo(user);
-  } else {
-    setLoading(false);
-    showMsg('msg-login', '❌ خطا در ذخیره اطلاعات.', 'error');
-  }
-}
-
-async function updateLastLogin(user) {
+  if (!name || !email || password.length < 6) return alert("همه فیلدها را به درستی پر کنید");
+  
   try {
-    const userRef = doc(db, "users", user.uid);
-    await setDoc(userRef, { lastLogin: new Date().toISOString() }, { merge: true });
-  } catch (e) {}
-}
-
-// توابع تأیید ایمیل
-window.checkVerified = async function () {
-  if (!pendingUser) return;
-  setLoading(true, 'در حال بررسی...');
-  try {
-    await reload(pendingUser);
-    if (pendingUser.emailVerified) {
-      await saveLoginEntry(pendingUser);
-      await updateLastLogin(pendingUser);
-      saveAndGo(pendingUser);
-    } else {
-      setLoading(false);
-      document.getElementById('verify-msg').textContent = '❌ هنوز ایمیل تأیید نشده است.';
-    }
+    const userCred = await auth.createUserWithEmailAndPassword(email, password);
+    await userCred.user.updateProfile({ displayName: name });
+    
+    // ذخیره در Firestore
+    await db.collection("users").doc(userCred.user.uid).set({
+      uid: userCred.user.uid,
+      displayName: name,
+      email: email,
+      createdAt: new Date().toISOString()
+    });
+    
+    alert("✅ ثبت‌نام با موفقیت انجام شد! لطفاً ایمیل خود را تأیید کنید.");
   } catch (err) {
-    setLoading(false);
-    document.getElementById('verify-msg').textContent = '❌ خطا در بررسی.';
+    alert("❌ " + err.message);
   }
-};
-
-window.resendVerification = async function () {
-  if (!pendingUser) return;
-  try {
-    await sendEmailVerification(pendingUser);
-    document.getElementById('verify-msg').textContent = '✅ ایمیل دوباره ارسال شد!';
-    setTimeout(() => document.getElementById('verify-msg').textContent = '', 4000);
-  } catch (err) {
-    document.getElementById('verify-msg').textContent = '❌ ' + translateError(err.code);
-  }
-};
-
-window.cancelVerify = function () {
-  if (pendingUser) try { pendingUser.delete(); } catch (_) {}
-  pendingUser = null;
-  document.getElementById('verify-screen').classList.remove('active');
-};
-
-function translateError(code) {
-  const errors = {
-    'auth/email-already-in-use': '❌ این ایمیل قبلاً ثبت شده است.',
-    'auth/invalid-email': '❌ فرمت ایمیل اشتباه است.',
-    'auth/weak-password': '❌ رمز عبور خیلی ضعیف است.',
-    'auth/user-not-found': '❌ این ایمیل ثبت نشده است.',
-    'auth/wrong-password': '❌ رمز عبور اشتباه است.',
-    'auth/popup-blocked': '❌ پنجره گوگل بلاک شده است.',
-    'auth/network-request-failed': '📶 مشکل اینترنت.',
-    'auth/too-many-requests': '⚠️ تلاش زیاد! کمی صبر کنید.',
-  };
-  return errors[code] || '❌ خطا: ' + code;
 }
+
+// Google Sign In
+async function signInWithGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try {
+    const result = await auth.signInWithPopup(provider);
+    const user = result.user;
+    
+    // ذخیره اطلاعات
+    await db.collection("users").doc(user.uid).set({
+      uid: user.uid,
+      displayName: user.displayName,
+      email: user.email,
+      photoURL: user.photoURL,
+      createdAt: new Date().toISOString()
+    }, { merge: true });
+    
+    alert("✅ ورود با گوگل با موفقیت انجام شد!");
+    window.location.href = "home.html";
+  } catch (err) {
+    alert("❌ " + err.message);
+  }
+}
+
+// Particles Effect
+setInterval(() => {
+  const p = document.createElement('div');
+  p.style.position = 'fixed';
+  p.style.width = '5px';
+  p.style.height = '5px';
+  p.style.background = '#a855f7';
+  p.style.borderRadius = '50%';
+  p.style.left = Math.random() * 100 + 'vw';
+  p.style.bottom = '-10px';
+  p.style.opacity = '0.6';
+  p.style.animation = 'float 10s linear forwards';
+  document.body.appendChild(p);
+  setTimeout(() => p.remove(), 10000);
+}, 200);
 </script>
+
+<style>
+@keyframes float {
+  to { transform: translateY(-900px); opacity: 0; }
+}
+</style>
 </body>
 </html>
