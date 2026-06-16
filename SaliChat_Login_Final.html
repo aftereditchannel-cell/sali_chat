@@ -340,37 +340,37 @@ input:focus{
   <div class="logo">
     <div class="logo-icon">👀</div>
     <h1>سالی چت</h1>
-    <span>ورود به دنیای جدید هوش مصنوعی</span>
+    <span>ورود به دنیای جدید</span>
   </div>
 
   <div class="glass-box">
     <!-- Tabs -->
     <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('login')">ورود</button>
-      <button class="tab-btn" onclick="switchTab('signup')">ثبت‌نام</button>
+      <button class="tab-btn active" onclick="switchTab('login')">از اون قدیمی هاشم</button>
+      <button class="tab-btn" onclick="switchTab('signup')">کاربر جدیدم</button>
     </div>
 
     <!-- Login Panel -->
     <div class="panel active" id="panel-login">
       <div class="form-group">
-        <label>آدرس ایمیل</label>
+        <label>آدرس ایمیل لطفا🥱</label>
         <input type="email" id="login-email" placeholder="example@email.com">
       </div>
       <div class="form-group">
-        <label>رمز عبور</label>
+        <label> رمزت چی بود؟ 🥷</label>
         <input type="password" id="login-password" placeholder="••••••••">
       </div>
-      <button class="primary-btn" id="login-btn" onclick="loginWithEmail()">ورود به حساب</button>
+      <button class="primary-btn" id="login-btn" onclick="loginWithEmail()">لتس گوو 🫠</button>
     
       <div class="divider">
         <div></div>
-        <span>یا</span>
+        <span>و یا</span>
         <div></div>
       </div>
     
       <button class="google-btn" onclick="signInWithGoogle()">
         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
-        ورود با گوگل
+        ورود با گوگول 🥰
       </button>
       <div class="msg" id="msg-login"></div>
     </div>
@@ -378,18 +378,18 @@ input:focus{
     <!-- Signup Panel -->
     <div class="panel" id="panel-signup">
       <div class="form-group">
-        <label>نام نمایشی</label>
+        <label>چی صدات کنیم هوم؟ 🤔</label>
         <input type="text" id="signup-name" placeholder="مثلاً امیر">
       </div>
       <div class="form-group">
-        <label>آدرس ایمیل</label>
+        <label>یه ایمیل بم بده 📧</label>
         <input type="email" id="signup-email" placeholder="example@email.com">
       </div>
       <div class="form-group">
-        <label>رمز عبور (حداقل ۶ کاراکتر)</label>
+        <label>رمز عبور (حداقل ۶ کاراکتر عاموو)🔐</label>
         <input type="password" id="signup-password" placeholder="••••••••">
       </div>
-      <button class="primary-btn" id="signup-btn" onclick="signupWithEmail()">ثبت‌نام</button>
+      <button class="primary-btn" id="signup-btn" onclick="signupWithEmail()">بزن بریم🕺</button>
     
       <div class="divider">
         <div></div>
@@ -399,7 +399,7 @@ input:focus{
     
       <button class="google-btn" onclick="signInWithGoogle()">
         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
-        ثبت‌نام با گوگل
+       ثبت‌نام با گوگول 😘
       </button>
       <div class="msg" id="msg-signup"></div>
     </div>
@@ -556,7 +556,7 @@ window.signupWithEmail = async function () {
   const email = document.getElementById('signup-email').value.trim();
   const password = document.getElementById('signup-password').value;
   if (!name || !email || password.length < 6) {
-    return showMsg('msg-signup', '⚠️ همه فیلدها را پر کنید.', 'error');
+    return showMsg('msg-signup', '⚠️ همه فیلدها را پر کن لطفا.', 'error');
   }
   setLoading(true, 'در حال ثبت‌نام...');
   document.getElementById('signup-btn').disabled = true;
@@ -584,9 +584,9 @@ window.loginWithEmail = async function () {
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
   if (!email || !password) {
-    return showMsg('msg-login', '⚠️ ایمیل و رمز عبور را وارد کنید.', 'error');
+    return showMsg('msg-login', '⚠️ ایمیل و رمز عبور را وارد کنن.', 'error');
   }
-  setLoading(true, 'در حال ورود...');
+  setLoading(true, 'بزا ببینم موتونم واردت کنم...');
   document.getElementById('login-btn').disabled = true;
   try {
     const cred = await signInWithEmailAndPassword(auth, email, password);
@@ -611,7 +611,7 @@ window.loginWithEmail = async function () {
 
 // ورود با گوگل
 window.signInWithGoogle = async function () {
-  setLoading(true, 'در حال اتصال به گوگل...');
+  setLoading(true, 'اینجا ایرانه بصبر به گوگول وصل شم....');
   clearMessages();
   try {
     const result = await signInWithPopup(auth, googleProvider);
@@ -654,7 +654,7 @@ async function updateLastLogin(user) {
 // توابع تأیید ایمیل
 window.checkVerified = async function () {
   if (!pendingUser) return;
-  setLoading(true, 'در حال بررسی...');
+  setLoading(true, 'بزار ببینم میشناسم تولو 😄');
   try {
     await reload(pendingUser);
     if (pendingUser.emailVerified) {
@@ -662,7 +662,7 @@ window.checkVerified = async function () {
       saveAndGo(pendingUser);
     } else {
       setLoading(false);
-      document.getElementById('verify-msg').textContent = '❌ هنوز ایمیل تأیید نشده است.';
+      document.getElementById('verify-msg').textContent = '😛 دولوخ گو ایمیلیت تایید نشده';
     }
   } catch (err) {
     setLoading(false);
@@ -689,14 +689,14 @@ window.cancelVerify = function () {
 
 function translateError(code) {
   const errors = {
-    'auth/email-already-in-use': '❌ این ایمیل قبلاً ثبت شده است.',
-    'auth/invalid-email': '❌ فرمت ایمیل اشتباه است.',
-    'auth/weak-password': '❌ رمز عبور خیلی ضعیف است.',
-    'auth/user-not-found': '❌ این ایمیل ثبت نشده است.',
-    'auth/wrong-password': '❌ رمز عبور اشتباه است.',
+    'auth/email-already-in-use': '🤓 این ایمیل قبلاً ثبت شده برو وارد شو',
+    'auth/invalid-email': '😑 ایمیل آخه این شکلیه؟ من مسخرتم؟',
+    'auth/weak-password': '🥰 رمز عبور خیلی ضعیفه.',
+    'auth/user-not-found': '🥱 این ایمیل تاحالا ثبت نام نکرده',
+    'auth/wrong-password': '😁 رمزت اشتباهه عسیسمم',
     'auth/popup-blocked': '❌ پنجره گوگل بلاک شده است.',
-    'auth/network-request-failed': '📶 مشکل اینترنت.',
-    'auth/too-many-requests': '⚠️ تلاش زیاد! کمی صبر کنید.',
+    'auth/network-request-failed': '📶 نتت اهم اهم آفتوبه بدم؟',
+    'auth/too-many-requests': '🫠 بابا مارون ساییدی یکم بصبررر',
   };
   return errors[code] || '❌ خطا: ' + code;
 }
